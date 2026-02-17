@@ -1,10 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SchoolPortal.Models;
 
 public class Questionnaire
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+
+    [Required]
     public string Title { get; set; } = string.Empty;
-    public string Question { get; set; } = string.Empty;
+
+    public List<string> Questions { get; set; } = new();
+
     public List<QuestionnaireResponse> Responses { get; set; } = new();
 }
 

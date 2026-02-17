@@ -11,24 +11,103 @@
 else
 {
     <div class="panel">
-        <h2>My calendar</h2>
-        @foreach (var schedule in MySchedules)
-        {
-            <div class="list-item">
-                <strong>@schedule.Name</strong>
-                <div>@schedule.Start:g - @schedule.End:g</div>
-                <small>@schedule.Room · @schedule.Instructor</small>
+        <div class="calendar-header">
+            <h2>My calendar</h2>
+            <div class="calendar-actions">
+                <button class="btn" @onclick="PreviousMonth">←</button>
+                <strong>@monthToShow.ToString("MMMM yyyy")</strong>
+                <button class="btn" @onclick="NextMonth">→</button>
             </div>
-        }
+        </div>
 
-        @if (!MySchedules.Any())
-        {
-            <p>No classes selected yet.</p>
-        }
+        <div class="calendar-grid calendar-weekdays">
+            @foreach (var name in dayNames)
+            {
+                <div class="calendar-cell weekday">@name</div>
+            }
+        </div>
+
+        <div class="calendar-grid">
+            @foreach (var day in BuildMonthDays())
+            {
+                <button class="calendar-cell day @(day.IsCurrentMonth ? string.Empty : "muted-day") @(day.HasClasses ? "has-event" : string.Empty)"
+                        @onclick="() => OpenDay(day.Date)">
+                    <span>@day.Date.Day</span>
+                </button>
+            }
+        </div>
     </div>
+
+    @if (selectedDate is not null)
+    {
+        <div class="modal-backdrop" @onclick="CloseDayModal">
+            <div class="modal" @onclick:stopPropagation>
+                <h3>Classes on @selectedDate.Value.ToString("D")</h3>
+
+                @if (selectedClasses.Any())
+                {
+                    @foreach (var schedule in selectedClasses)
+                    {
+                        <div class="list-item">
+                            <strong>@schedule.Name</strong>
+                            <div>@schedule.Start:t - @schedule.End:t</div>
+                            <small>@schedule.Room · @schedule.Instructor</small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No classes assigned on this day.</p>
+                }
+
+                <button class="btn" @onclick="CloseDayModal">Close</button>
+            </div>
+        </div>
+    }
 }
 
 @code {
+    private readonly string[] dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    private DateTime monthToShow = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private DateTime? selectedDate;
+    private List<ClassSchedule> selectedClasses = new();
+
     private IEnumerable<ClassSchedule> MySchedules =>
         Data.Schedules.Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase));
+
+    private void PreviousMonth() => monthToShow = monthToShow.AddMonths(-1);
+
+    private void NextMonth() => monthToShow = monthToShow.AddMonths(1);
+
+    private IEnumerable<CalendarDay> BuildMonthDays()
+    {
+        var first = new DateTime(monthToShow.Year, monthToShow.Month, 1);
+        var start = first.AddDays(-(int)first.DayOfWeek);
+
+        for (var i = 0; i < 42; i++)
+        {
+            var date = start.AddDays(i);
+            yield return new CalendarDay(
+                date,
+                date.Month == monthToShow.Month,
+                MySchedules.Any(s => s.Start.Date == date.Date));
+        }
+    }
+
+    private void OpenDay(DateTime date)
+    {
+        selectedDate = date.Date;
+        selectedClasses = MySchedules
+            .Where(s => s.Start.Date == date.Date)
+            .OrderBy(s => s.Start)
+            .ToList();
+    }
+
+    private void CloseDayModal()
+    {
+        selectedDate = null;
+        selectedClasses.Clear();
+    }
+
+    private record CalendarDay(DateTime Date, bool IsCurrentMonth, bool HasClasses);
 }

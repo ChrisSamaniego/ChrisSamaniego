@@ -1,6 +1,5 @@
 @page "/student"
 @inject AppStateService AppState
-@inject SchoolDataService Data
 
 <PageTitle>Student</PageTitle>
 
@@ -8,87 +7,13 @@
 {
     <div class="panel">
         <h2>Student area</h2>
-        <p>Switch to <strong>Student</strong> role from Dashboard to access your classes and questionnaires.</p>
+        <p>Switch to <strong>Student</strong> role from Dashboard to access your classes, tests, and calendar.</p>
     </div>
 }
 else
 {
     <div class="panel">
-        <h2>My calendar</h2>
-        @foreach (var schedule in MySchedules)
-        {
-            <div class="list-item">
-                <strong>@schedule.Name</strong>
-                <div>@schedule.Start:g - @schedule.End:g</div>
-                <small>@schedule.Room · @schedule.Instructor</small>
-            </div>
-        }
-        @if (!MySchedules.Any())
-        {
-            <p>No classes selected yet.</p>
-        }
+        <h2>Student workspace</h2>
+        <p>Use the left menu to open Home, Classes, Tests, Calendar, and Configuration.</p>
     </div>
-
-    <div class="panel">
-        <h2>Select class schedules</h2>
-        @foreach (var schedule in Data.Schedules)
-        {
-            <div class="list-item list-item-row">
-                <div>
-                    <strong>@schedule.Name</strong>
-                    <div>@schedule.Start:g - @schedule.End:g</div>
-                </div>
-                <button class="btn" @onclick="() => AssignSchedule(schedule.Id)">Add to my calendar</button>
-            </div>
-        }
-    </div>
-
-    <div class="panel">
-        <h2>Questionnaires</h2>
-        @foreach (var questionnaire in Data.Questionnaires)
-        {
-            <EditForm Model="responses[questionnaire.Id]" OnValidSubmit="() => SubmitAnswer(questionnaire)">
-                <DataAnnotationsValidator />
-                <div class="list-item">
-                    <strong>@questionnaire.Title</strong>
-                    <p>@questionnaire.Question</p>
-                    <InputTextArea @bind-Value="responses[questionnaire.Id].Answer" />
-                    <button class="btn" type="submit">Submit answer</button>
-                </div>
-            </EditForm>
-        }
-    </div>
-}
-
-@code {
-    private Dictionary<Guid, QuestionnaireResponse> responses = new();
-
-    private IEnumerable<ClassSchedule> MySchedules =>
-        Data.Schedules.Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase));
-
-    protected override void OnInitialized()
-    {
-        foreach (var questionnaire in Data.Questionnaires)
-        {
-            if (!responses.ContainsKey(questionnaire.Id))
-            {
-                responses[questionnaire.Id] = new QuestionnaireResponse();
-            }
-        }
-    }
-
-    private void AssignSchedule(Guid scheduleId)
-    {
-        Data.AssignStudentToSchedule(scheduleId, AppState.CurrentStudentName);
-    }
-
-    private void SubmitAnswer(Questionnaire questionnaire)
-    {
-        var response = responses[questionnaire.Id];
-        response.StudentName = AppState.CurrentStudentName;
-        response.SubmittedAt = DateTime.UtcNow;
-
-        Data.SubmitResponse(questionnaire.Id, response);
-        responses[questionnaire.Id] = new QuestionnaireResponse();
-    }
 }

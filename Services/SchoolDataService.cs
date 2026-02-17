@@ -19,8 +19,16 @@ public class SchoolDataService
             Name = "World History",
             Instructor = "Mr. Carter",
             Room = "B-03",
-            Start = DateTime.Today.AddHours(11),
-            End = DateTime.Today.AddHours(12)
+            Start = DateTime.Today.AddDays(1).AddHours(11),
+            End = DateTime.Today.AddDays(1).AddHours(12)
+        },
+        new()
+        {
+            Name = "Physics Lab",
+            Instructor = "Dr. Stone",
+            Room = "C-11",
+            Start = DateTime.Today.AddDays(3).AddHours(14),
+            End = DateTime.Today.AddDays(3).AddHours(15)
         }
     ];
 
@@ -28,8 +36,13 @@ public class SchoolDataService
     [
         new()
         {
-            Title = "Class Feedback",
-            Question = "What can we improve in this class?"
+            Title = "Science Test",
+            Questions =
+            [
+                "What is Newton's second law?",
+                "Name one renewable energy source.",
+                "Explain the difference between mass and weight."
+            ]
         }
     ];
 
@@ -56,6 +69,11 @@ public class SchoolDataService
     public void CreateQuestionnaire(Questionnaire questionnaire)
     {
         questionnaire.Id = Guid.NewGuid();
+        questionnaire.Questions = questionnaire.Questions
+            .Where(q => !string.IsNullOrWhiteSpace(q))
+            .Select(q => q.Trim())
+            .ToList();
+
         Questionnaires.Add(questionnaire);
     }
 

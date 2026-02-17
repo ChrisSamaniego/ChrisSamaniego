@@ -36,16 +36,16 @@ else
         </div>
 
         <div class="panel">
-            <h2>Create questionnaire</h2>
+            <h2>Create test</h2>
             <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">
                     <label>Title</label>
                     <InputText @bind-Value="newQuestionnaire.Title" />
-                    <label>Question</label>
-                    <InputTextArea @bind-Value="newQuestionnaire.Question" />
-                    <button class="btn" type="submit">Create questionnaire</button>
+                    <label>Questions (one per line)</label>
+                    <InputTextArea @bind-Value="questionInput" rows="5" />
+                    <button class="btn" type="submit">Create test</button>
                 </div>
             </EditForm>
         </div>
@@ -64,12 +64,17 @@ else
     </div>
 
     <div class="panel">
-        <h3>Questionnaires</h3>
+        <h3>Tests</h3>
         @foreach (var questionnaire in Data.Questionnaires)
         {
             <div class="list-item">
                 <strong>@questionnaire.Title</strong>
-                <p>@questionnaire.Question</p>
+                <ol>
+                    @foreach (var question in questionnaire.Questions)
+                    {
+                        <li>@question</li>
+                    }
+                </ol>
                 <small>Responses: @questionnaire.Responses.Count</small>
             </div>
         }
@@ -84,6 +89,7 @@ else
     };
 
     private Questionnaire newQuestionnaire = new();
+    private string questionInput = string.Empty;
 
     private void CreateSchedule()
     {
@@ -97,7 +103,13 @@ else
 
     private void CreateQuestionnaire()
     {
+        newQuestionnaire.Questions = questionInput
+            .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
         Data.CreateQuestionnaire(newQuestionnaire);
+
         newQuestionnaire = new Questionnaire();
+        questionInput = string.Empty;
     }
 }

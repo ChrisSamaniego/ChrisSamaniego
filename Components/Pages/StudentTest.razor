@@ -11,42 +11,89 @@
 else
 {
     <div class="panel">
-        <h2>Test</h2>
+        <h2>Tests</h2>
         @foreach (var questionnaire in Data.Questionnaires)
         {
-            <EditForm Model="responses[questionnaire.Id]" OnValidSubmit="() => SubmitAnswer(questionnaire)">
-                <DataAnnotationsValidator />
-                <div class="list-item">
-                    <strong>@questionnaire.Title</strong>
-                    <p>@questionnaire.Question</p>
-                    <InputTextArea @bind-Value="responses[questionnaire.Id].Answer" />
-                    <button class="btn" type="submit">Submit answer</button>
-                </div>
-            </EditForm>
+            var state = GetState(questionnaire);
+
+            <div class="list-item">
+                <strong>@questionnaire.Title</strong>
+
+                @if (!questionnaire.Questions.Any())
+                {
+                    <p>No questions available in this test yet.</p>
+                }
+                else
+                {
+                    @for (var i = 0; i < questionnaire.Questions.Count; i++)
+                    {
+                        <label><strong>Q@(i + 1).</strong> @questionnaire.Questions[i]</label>
+                        <InputTextArea @bind-Value="state.Answers[i]" rows="3" />
+                    }
+
+                    <button class="btn" @onclick="() => SubmitAnswers(questionnaire)">Submit answers</button>
+
+                    @if (state.ShowValidation)
+                    {
+                        <p class="error-text">Please answer all questions before submitting.</p>
+                    }
+                }
+            </div>
         }
     </div>
 }
 
 @code {
-    private Dictionary<Guid, QuestionnaireResponse> responses = new();
+    private readonly Dictionary<Guid, TestAnswerState> testStates = new();
 
-    protected override void OnInitialized()
+    private TestAnswerState GetState(Questionnaire questionnaire)
     {
-        foreach (var questionnaire in Data.Questionnaires)
+        if (!testStates.TryGetValue(questionnaire.Id, out var state))
         {
-            if (!responses.ContainsKey(questionnaire.Id))
-            {
-                responses[questionnaire.Id] = new QuestionnaireResponse();
-            }
+            state = new TestAnswerState(questionnaire.Questions.Count);
+            testStates[questionnaire.Id] = state;
         }
+
+        if (state.Answers.Count != questionnaire.Questions.Count)
+        {
+            state = new TestAnswerState(questionnaire.Questions.Count);
+            testStates[questionnaire.Id] = state;
+        }
+
+        return state;
     }
 
-    private void SubmitAnswer(Questionnaire questionnaire)
+    private void SubmitAnswers(Questionnaire questionnaire)
     {
-        var response = responses[questionnaire.Id];
-        response.StudentName = AppState.CurrentStudentName;
-        response.SubmittedAt = DateTime.UtcNow;
+        var state = GetState(questionnaire);
+
+        if (state.Answers.Any(answer => string.IsNullOrWhiteSpace(answer)))
+        {
+            state.ShowValidation = true;
+            return;
+        }
+
+        var response = new QuestionnaireResponse
+        {
+            StudentName = AppState.CurrentStudentName,
+            SubmittedAt = DateTime.UtcNow,
+            Answer = string.Join(Environment.NewLine,
+                state.Answers.Select((answer, index) => $"Q{index + 1}: {answer.Trim()}"))
+        };
+
         Data.SubmitResponse(questionnaire.Id, response);
-        responses[questionnaire.Id] = new QuestionnaireResponse();
+        testStates[questionnaire.Id] = new TestAnswerState(questionnaire.Questions.Count);
+    }
+
+    private class TestAnswerState
+    {
+        public TestAnswerState(int questionCount)
+        {
+            Answers = Enumerable.Repeat(string.Empty, questionCount).ToList();
+        }
+
+        public List<string> Answers { get; }
+
+        public bool ShowValidation { get; set; }
     }
 }
