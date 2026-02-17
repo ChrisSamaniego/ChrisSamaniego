@@ -1,0 +1,59 @@
+@page "/"
+@inject AppStateService AppState
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="panel">
+    <h1>School Portal</h1>
+    <p>Centralized dashboard for schedules, tests, online classes, and communication.</p>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h4>Attendance</h4>
+            <strong>96%</strong>
+            <small>Current month average</small>
+        </div>
+        <div class="kpi-card">
+            <h4>Upcoming tests</h4>
+            <strong>2</strong>
+            <small>Next 7 days</small>
+        </div>
+        <div class="kpi-card">
+            <h4>Unread contacts</h4>
+            <strong>1</strong>
+            <small>From administration</small>
+        </div>
+    </div>
+
+    <div class="role-switcher">
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
+    </div>
+
+    @if (AppState.CurrentRole == UserRole.Student)
+    {
+        <EditForm Model="studentState" OnValidSubmit="SaveStudentName">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label for="studentName">Student name</label>
+                <InputText id="studentName" @bind-Value="studentState.Name" />
+                <button class="btn" type="submit">Save profile</button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private StudentState studentState = new() { Name = "Student One" };
+
+    private void SaveStudentName()
+    {
+        AppState.SetStudentName(studentState.Name);
+    }
+
+    private class StudentState
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+}

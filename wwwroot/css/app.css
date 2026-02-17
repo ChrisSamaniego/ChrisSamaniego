@@ -1,0 +1,311 @@
+:root {
+    --bg: #f3f5f8;
+    --surface: #ffffff;
+    --surface-soft: #f8f9fb;
+    --text: #1f2328;
+    --muted: #697585;
+    --border: #d9dee5;
+    --accent: #2563eb;
+    --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.page {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.sidebar,
+.top-row,
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.sidebar { padding: 1rem; }
+.brand { font-weight: 700; margin-bottom: 1rem; }
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    text-decoration: none;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: all 120ms ease;
+}
+
+.nav-menu a:hover {
+    background: var(--surface-soft);
+    border-color: var(--border);
+}
+
+.nav-icon {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #8c97a8;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 18px;
+}
+
+.top-row {
+    padding: 0.9rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.content { padding-top: 1rem; display: grid; gap: 1rem; }
+.panel { padding: 1rem; }
+
+.btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn:hover { border-color: #b8c0cc; background: #f9fafc; }
+
+.responsive-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.form-grid { display: grid; gap: 0.6rem; }
+
+.list-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-soft);
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.list-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+input, textarea, select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem;
+    font: inherit;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: 2px solid #c4dcff;
+    border-color: var(--accent);
+}
+
+.role-switcher { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+/* Microsoft-like month calendar */
+.calendar-shell {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1rem;
+}
+
+.microsoft-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.calendar-actions { display: flex; gap: 0.45rem; }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0;
+}
+
+.calendar-cell {
+    border: 1px solid var(--border);
+    background: #fff;
+}
+
+.microsoft-weekdays .weekday {
+    min-height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom-width: 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.microsoft-days .microsoft-day {
+    min-height: 82px;
+    text-align: left;
+    vertical-align: top;
+    padding: 0.4rem;
+    position: relative;
+    cursor: pointer;
+    border-top-width: 0;
+}
+
+.day-number {
+    font-size: 0.85rem;
+    color: #303a46;
+}
+
+.muted-day .day-number { color: #b4bdca; }
+
+.has-event .event-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3b82f6;
+    bottom: 8px;
+    left: 8px;
+}
+
+.selected-day {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+    background: #f0f6ff;
+}
+
+.agenda-panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem;
+    background: #fff;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.video-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    background: var(--surface-soft);
+}
+
+.video-card h3 {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.video-card iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 8px;
+}
+
+.error-text { color: #b91c1c; font-weight: 600; }
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin: 0.75rem 0 1rem;
+}
+
+.kpi-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    padding: 0.8rem;
+}
+
+.kpi-card h4 {
+    margin: 0 0 0.35rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.kpi-card strong {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.status-tag {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-tag.pending {
+    background: #fff7ed;
+    color: #b45309;
+}
+
+.message-reply {
+    margin-top: 0.6rem;
+    border-left: 3px solid #bfdbfe;
+    padding-left: 0.6rem;
+}
+
+
+@media (max-width: 980px) {
+    .page {
+        grid-template-columns: 1fr;
+        padding: 0.75rem;
+    }
+
+    .nav-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .calendar-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .list-item-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
