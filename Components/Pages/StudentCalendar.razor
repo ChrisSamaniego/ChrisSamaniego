@@ -10,74 +10,86 @@
 }
 else
 {
-    <div class="panel">
-        <div class="calendar-header">
-            <h2>My calendar</h2>
-            <div class="calendar-actions">
-                <button class="btn" @onclick="PreviousMonth">←</button>
-                <strong>@monthToShow.ToString("MMMM yyyy")</strong>
-                <button class="btn" @onclick="NextMonth">→</button>
+    <div class="calendar-shell panel">
+        <section>
+            <div class="calendar-header microsoft-header">
+                <div>
+                    <h2>Calendar</h2>
+                    <small>@monthToShow.ToString("MMMM yyyy")</small>
+                </div>
+                <div class="calendar-actions">
+                    <button class="btn" @onclick="PreviousMonth">Previous</button>
+                    <button class="btn" @onclick="Today">Today</button>
+                    <button class="btn" @onclick="NextMonth">Next</button>
+                </div>
             </div>
-        </div>
 
-        <div class="calendar-grid calendar-weekdays">
-            @foreach (var name in dayNames)
-            {
-                <div class="calendar-cell weekday">@name</div>
-            }
-        </div>
+            <div class="calendar-grid calendar-weekdays microsoft-weekdays">
+                @foreach (var name in dayNames)
+                {
+                    <div class="calendar-cell weekday">@name</div>
+                }
+            </div>
 
-        <div class="calendar-grid">
-            @foreach (var day in BuildMonthDays())
+            <div class="calendar-grid microsoft-days">
+                @foreach (var day in BuildMonthDays())
+                {
+                    <button class="calendar-cell day microsoft-day @(day.IsCurrentMonth ? string.Empty : "muted-day") @(day.HasClasses ? "has-event" : string.Empty) @(selectedDate == day.Date.Date ? "selected-day" : string.Empty)"
+                            @onclick="() => OpenDay(day.Date)">
+                        <span class="day-number">@day.Date.Day</span>
+                        @if (day.HasClasses)
+                        {
+                            <span class="event-dot"></span>
+                        }
+                    </button>
+                }
+            </div>
+        </section>
+
+        <aside class="agenda-panel">
+            <h3>@selectedDate.ToString("dddd, MMM d")</h3>
+            @if (selectedClasses.Any())
             {
-                <button class="calendar-cell day @(day.IsCurrentMonth ? string.Empty : "muted-day") @(day.HasClasses ? "has-event" : string.Empty)"
-                        @onclick="() => OpenDay(day.Date)">
-                    <span>@day.Date.Day</span>
-                </button>
+                @foreach (var schedule in selectedClasses)
+                {
+                    <div class="list-item">
+                        <strong>@schedule.Name</strong>
+                        <div>@schedule.Start:t - @schedule.End:t</div>
+                        <small>@schedule.Room · @schedule.Instructor</small>
+                    </div>
+                }
             }
-        </div>
+            else
+            {
+                <p>No classes assigned on this day.</p>
+            }
+        </aside>
     </div>
-
-    @if (selectedDate is not null)
-    {
-        <div class="modal-backdrop" @onclick="CloseDayModal">
-            <div class="modal" @onclick:stopPropagation>
-                <h3>Classes on @selectedDate.Value.ToString("D")</h3>
-
-                @if (selectedClasses.Any())
-                {
-                    @foreach (var schedule in selectedClasses)
-                    {
-                        <div class="list-item">
-                            <strong>@schedule.Name</strong>
-                            <div>@schedule.Start:t - @schedule.End:t</div>
-                            <small>@schedule.Room · @schedule.Instructor</small>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p>No classes assigned on this day.</p>
-                }
-
-                <button class="btn" @onclick="CloseDayModal">Close</button>
-            </div>
-        </div>
-    }
 }
 
 @code {
     private readonly string[] dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     private DateTime monthToShow = new(DateTime.Today.Year, DateTime.Today.Month, 1);
-    private DateTime? selectedDate;
+    private DateTime selectedDate = DateTime.Today;
     private List<ClassSchedule> selectedClasses = new();
 
     private IEnumerable<ClassSchedule> MySchedules =>
         Data.Schedules.Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase));
 
+    protected override void OnInitialized()
+    {
+        OpenDay(DateTime.Today);
+    }
+
     private void PreviousMonth() => monthToShow = monthToShow.AddMonths(-1);
 
     private void NextMonth() => monthToShow = monthToShow.AddMonths(1);
+
+    private void Today()
+    {
+        monthToShow = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+        OpenDay(DateTime.Today);
+    }
 
     private IEnumerable<CalendarDay> BuildMonthDays()
     {
@@ -101,12 +113,6 @@ else
             .Where(s => s.Start.Date == date.Date)
             .OrderBy(s => s.Start)
             .ToList();
-    }
-
-    private void CloseDayModal()
-    {
-        selectedDate = null;
-        selectedClasses.Clear();
     }
 
     private record CalendarDay(DateTime Date, bool IsCurrentMonth, bool HasClasses);
