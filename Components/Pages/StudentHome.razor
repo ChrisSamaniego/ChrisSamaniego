@@ -1,0 +1,19 @@
+@page "/student/home"
+@inject AppStateService AppState
+
+<PageTitle>Student Home</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel">
+        <h2>Student area</h2>
+        <p>Switch to <strong>Student</strong> role from Dashboard to access your options.</p>
+    </div>
+}
+else
+{
+    <div class="panel">
+        <h2>Student Home</h2>
+        <p>Use the menu to open Classes, Online classes, Tests, Calendar, and Configuration.</p>
+    </div>
+}

@@ -1,0 +1,115 @@
+@page "/admin"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Administrator</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Administrator)
+{
+    <div class="panel">
+        <h2>Administrator area</h2>
+        <p>Switch to <strong>Administrator</strong> role from Dashboard to manage schedules and questionnaires.</p>
+    </div>
+}
+else
+{
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>Create class schedule</h2>
+            <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>Name</label>
+                    <InputText @bind-Value="newSchedule.Name" />
+                    <label>Instructor</label>
+                    <InputText @bind-Value="newSchedule.Instructor" />
+                    <label>Room</label>
+                    <InputText @bind-Value="newSchedule.Room" />
+                    <label>Start</label>
+                    <InputDate @bind-Value="newSchedule.Start" />
+                    <label>End</label>
+                    <InputDate @bind-Value="newSchedule.End" />
+                    <button class="btn" type="submit">Create schedule</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="panel">
+            <h2>Create test</h2>
+            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>Title</label>
+                    <InputText @bind-Value="newQuestionnaire.Title" />
+                    <label>Questions (one per line)</label>
+                    <InputTextArea @bind-Value="questionInput" rows="5" />
+                    <button class="btn" type="submit">Create test</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Existing schedules</h3>
+        @foreach (var schedule in Data.Schedules)
+        {
+            <div class="list-item">
+                <strong>@schedule.Name</strong> - @schedule.Instructor (@schedule.Room)
+                <div>@schedule.Start:g - @schedule.End:g</div>
+                <small>Assigned: @string.Join(", ", schedule.AssignedStudents.DefaultIfEmpty("none"))</small>
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <h3>Tests</h3>
+        @foreach (var questionnaire in Data.Questionnaires)
+        {
+            <div class="list-item">
+                <strong>@questionnaire.Title</strong>
+                <ol>
+                    @foreach (var question in questionnaire.Questions)
+                    {
+                        <li>@question</li>
+                    }
+                </ol>
+                <small>Responses: @questionnaire.Responses.Count</small>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private ClassSchedule newSchedule = new()
+    {
+        Start = DateTime.Today,
+        End = DateTime.Today.AddDays(1)
+    };
+
+    private Questionnaire newQuestionnaire = new();
+    private string questionInput = string.Empty;
+
+    private void CreateSchedule()
+    {
+        Data.CreateSchedule(newSchedule);
+        newSchedule = new ClassSchedule
+        {
+            Start = DateTime.Today,
+            End = DateTime.Today.AddDays(1)
+        };
+    }
+
+    private void CreateQuestionnaire()
+    {
+        newQuestionnaire.Questions = questionInput
+            .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        Data.CreateQuestionnaire(newQuestionnaire);
+
+        newQuestionnaire = new Questionnaire();
+        questionInput = string.Empty;
+    }
+}
