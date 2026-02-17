@@ -20,6 +20,21 @@ else
                 <button class="btn" type="submit">Save</button>
             </div>
         </EditForm>
+
+        <div class="profile-upload-block">
+            <h3>Profile photo</h3>
+            <p>Upload your profile image. If no photo is uploaded, initials will be shown in the circle.</p>
+
+            <InputFile OnChange="OnFileSelected" accept="image/*" />
+
+            @if (!string.IsNullOrWhiteSpace(AppState.CurrentStudentPhotoDataUrl))
+            {
+                <div class="profile-preview">
+                    <img src="@AppState.CurrentStudentPhotoDataUrl" alt="Profile preview" />
+                    <button type="button" class="btn" @onclick="RemovePhoto">Remove photo</button>
+                </div>
+            }
+        </div>
     </div>
 }
 
@@ -34,6 +49,28 @@ else
     private void Save()
     {
         AppState.SetStudentName(model.Name);
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null)
+        {
+            return;
+        }
+
+        await using var stream = file.OpenReadStream(2 * 1024 * 1024);
+        using var memory = new MemoryStream();
+        await stream.CopyToAsync(memory);
+
+        var base64 = Convert.ToBase64String(memory.ToArray());
+        var dataUrl = $"data:{file.ContentType};base64,{base64}";
+        AppState.SetStudentPhoto(dataUrl);
+    }
+
+    private void RemovePhoto()
+    {
+        AppState.SetStudentPhoto(null);
     }
 
     private class StudentConfig

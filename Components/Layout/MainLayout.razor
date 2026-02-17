@@ -4,7 +4,20 @@
 
 <div class="page">
     <aside class="sidebar">
-        <div class="brand">School Portal</div>
+        <div class="profile-summary">
+            <div class="profile-avatar" title="@AppState.CurrentStudentName">
+                @if (!string.IsNullOrWhiteSpace(AppState.CurrentStudentPhotoDataUrl))
+                {
+                    <img src="@AppState.CurrentStudentPhotoDataUrl" alt="Student profile photo" />
+                }
+                else
+                {
+                    <span>@AppState.GetStudentInitials()</span>
+                }
+            </div>
+            <small>@AppState.CurrentStudentName</small>
+        </div>
+
         <NavMenu />
     </aside>
 
