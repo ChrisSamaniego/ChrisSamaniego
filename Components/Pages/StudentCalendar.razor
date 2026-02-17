@@ -37,9 +37,9 @@ else
                     <small>@monthToShow.ToString("MMMM yyyy")</small>
                 </div>
                 <div class="calendar-actions">
-                    <button class="btn" @onclick="PreviousMonth">Previous</button>
-                    <button class="btn" @onclick="Today">Today</button>
-                    <button class="btn" @onclick="NextMonth">Next</button>
+                    <button type="button" class="btn" @onclick="PreviousMonth">Previous</button>
+                    <button type="button" class="btn" @onclick="Today">Today</button>
+                    <button type="button" class="btn" @onclick="NextMonth">Next</button>
                 </div>
             </div>
 
@@ -53,7 +53,7 @@ else
             <div class="calendar-grid microsoft-days">
                 @foreach (var day in BuildMonthDays())
                 {
-                    <button class="calendar-cell day microsoft-day @(day.IsCurrentMonth ? string.Empty : "muted-day") @(day.HasClasses ? "has-event" : string.Empty) @(selectedDate == day.Date.Date ? "selected-day" : string.Empty)"
+                    <button type="button" class="calendar-cell day microsoft-day @(day.IsCurrentMonth ? string.Empty : "muted-day") @(day.HasClasses ? "has-event" : string.Empty) @(selectedDate == day.Date.Date ? "selected-day" : string.Empty)"
                             @onclick="() => OpenDay(day.Date)">
                         <span class="day-number">@day.Date.Day</span>
                         @if (day.HasClasses)
@@ -117,6 +117,7 @@ else
     private void OpenDay(DateTime date)
     {
         selectedDate = date.Date;
+        monthToShow = new DateTime(date.Year, date.Month, 1);
         selectedClasses = MySchedules
             .Where(s => s.Start.Date == date.Date)
             .OrderBy(s => s.Start)

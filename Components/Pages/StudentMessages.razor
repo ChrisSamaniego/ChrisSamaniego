@@ -1,8 +1,8 @@
-@page "/student/messages"
+@page "/student/contact"
 @inject AppStateService AppState
 @inject SchoolDataService Data
 
-<PageTitle>Messages</PageTitle>
+<PageTitle>Contact</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
@@ -12,7 +12,7 @@ else
 {
     <div class="responsive-grid">
         <div class="panel">
-            <h2>Send message to administrator</h2>
+            <h2>Contact administrator</h2>
             <EditForm Model="newMessage" OnValidSubmit="SendMessage">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -27,7 +27,7 @@ else
         </div>
 
         <div class="panel">
-            <h2>Conversation history</h2>
+            <h2>Contact history</h2>
             @foreach (var message in MyMessages)
             {
                 <div class="list-item">

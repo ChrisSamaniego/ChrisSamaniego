@@ -12,7 +12,8 @@ public class SchoolDataService
             Instructor = "Ms. Rivera",
             Room = "A-12",
             Start = DateTime.Today.AddHours(9),
-            End = DateTime.Today.AddHours(10)
+            End = DateTime.Today.AddHours(10),
+            AssignedStudents = ["Student One"]
         },
         new()
         {
@@ -20,7 +21,8 @@ public class SchoolDataService
             Instructor = "Mr. Carter",
             Room = "B-03",
             Start = DateTime.Today.AddDays(1).AddHours(11),
-            End = DateTime.Today.AddDays(1).AddHours(12)
+            End = DateTime.Today.AddDays(1).AddHours(12),
+            AssignedStudents = ["Student One"]
         },
         new()
         {

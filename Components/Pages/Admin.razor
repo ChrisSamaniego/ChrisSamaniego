@@ -8,7 +8,7 @@
 {
     <div class="panel">
         <h2>Administrator area</h2>
-        <p>Switch to <strong>Administrator</strong> role from Dashboard to manage schedules, tests, and student messages.</p>
+        <p>Switch to <strong>Administrator</strong> role from Dashboard to manage schedules, tests, and student contact.</p>
     </div>
 }
 else
@@ -23,7 +23,7 @@ else
             <strong>@Data.Questionnaires.Count</strong>
         </div>
         <div class="kpi-card">
-            <h4>Pending messages</h4>
+            <h4>Pending contacts</h4>
             <strong>@Data.AdminMessages.Count(m => string.IsNullOrWhiteSpace(m.AdminReply))</strong>
         </div>
     </div>
@@ -67,7 +67,7 @@ else
     </div>
 
     <div class="panel">
-        <h3>Student messages</h3>
+        <h3>Student contact</h3>
         @foreach (var message in Data.AdminMessages.OrderByDescending(m => m.SentAt))
         {
             <div class="list-item">
