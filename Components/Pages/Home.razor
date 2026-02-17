@@ -1,0 +1,41 @@
+@page "/"
+@inject AppStateService AppState
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="panel">
+    <h1>Welcome to the School Portal</h1>
+    <p>Switch role to simulate administrator and student workflows.</p>
+
+    <div class="role-switcher">
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
+    </div>
+
+    @if (AppState.CurrentRole == UserRole.Student)
+    {
+        <EditForm Model="studentState" OnValidSubmit="SaveStudentName">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label for="studentName">Student name</label>
+                <InputText id="studentName" @bind-Value="studentState.Name" />
+                <button class="btn" type="submit">Save</button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private StudentState studentState = new() { Name = "Student One" };
+
+    private void SaveStudentName()
+    {
+        AppState.SetStudentName(studentState.Name);
+    }
+
+    private class StudentState
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+}

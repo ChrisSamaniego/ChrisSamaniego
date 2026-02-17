@@ -1,0 +1,18 @@
+@inject AppStateService AppState
+
+<nav class="nav-menu">
+    @if (AppState.CurrentRole == UserRole.Student)
+    {
+        <a href="/student/home">Home</a>
+        <a href="/student/classes">Classes</a>
+        <a href="/student/test">Tests</a>
+        <a href="/student/calendar">Calendar</a>
+        <a href="/student/configuration">Configuration</a>
+    }
+    else
+    {
+        <a href="/">Dashboard</a>
+        <a href="/admin">Administrator</a>
+        <a href="/student/home">Student</a>
+    }
+</nav>
