@@ -1,0 +1,34 @@
+@page "/student/calendar"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>My calendar</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>Switch to Student role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>My calendar</h2>
+        @foreach (var schedule in MySchedules)
+        {
+            <div class="list-item">
+                <strong>@schedule.Name</strong>
+                <div>@schedule.Start:g - @schedule.End:g</div>
+                <small>@schedule.Room · @schedule.Instructor</small>
+            </div>
+        }
+
+        @if (!MySchedules.Any())
+        {
+            <p>No classes selected yet.</p>
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<ClassSchedule> MySchedules =>
+        Data.Schedules.Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase));
+}

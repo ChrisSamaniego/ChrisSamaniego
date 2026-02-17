@@ -1,0 +1,43 @@
+@page "/student/configurations"
+@inject AppStateService AppState
+
+<PageTitle>Configurations</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>Switch to Student role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>Configurations</h2>
+        <EditForm Model="model" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label for="studentName">Display name</label>
+                <InputText id="studentName" @bind-Value="model.Name" />
+                <button class="btn" type="submit">Save</button>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    private StudentConfig model = new() { Name = "Student One" };
+
+    protected override void OnInitialized()
+    {
+        model.Name = AppState.CurrentStudentName;
+    }
+
+    private void Save()
+    {
+        AppState.SetStudentName(model.Name);
+    }
+
+    private class StudentConfig
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+}

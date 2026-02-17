@@ -1,0 +1,52 @@
+@page "/student/test"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Test</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>Switch to Student role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>Test</h2>
+        @foreach (var questionnaire in Data.Questionnaires)
+        {
+            <EditForm Model="responses[questionnaire.Id]" OnValidSubmit="() => SubmitAnswer(questionnaire)">
+                <DataAnnotationsValidator />
+                <div class="list-item">
+                    <strong>@questionnaire.Title</strong>
+                    <p>@questionnaire.Question</p>
+                    <InputTextArea @bind-Value="responses[questionnaire.Id].Answer" />
+                    <button class="btn" type="submit">Submit answer</button>
+                </div>
+            </EditForm>
+        }
+    </div>
+}
+
+@code {
+    private Dictionary<Guid, QuestionnaireResponse> responses = new();
+
+    protected override void OnInitialized()
+    {
+        foreach (var questionnaire in Data.Questionnaires)
+        {
+            if (!responses.ContainsKey(questionnaire.Id))
+            {
+                responses[questionnaire.Id] = new QuestionnaireResponse();
+            }
+        }
+    }
+
+    private void SubmitAnswer(Questionnaire questionnaire)
+    {
+        var response = responses[questionnaire.Id];
+        response.StudentName = AppState.CurrentStudentName;
+        response.SubmittedAt = DateTime.UtcNow;
+        Data.SubmitResponse(questionnaire.Id, response);
+        responses[questionnaire.Id] = new QuestionnaireResponse();
+    }
+}
