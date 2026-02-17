@@ -109,6 +109,54 @@ body {
     gap: 1rem;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon-btn {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+.icon-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #5b6676;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.icon-btn:hover {
+    background: var(--surface-soft);
+}
+
+.icon-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+}
+
 .content { padding-top: 1rem; display: grid; gap: 1rem; }
 .panel { padding: 1rem; }
 

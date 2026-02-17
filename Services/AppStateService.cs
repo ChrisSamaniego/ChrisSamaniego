@@ -28,6 +28,14 @@ public class AppStateService
         NotifyStateChanged();
     }
 
+    public void Logout()
+    {
+        CurrentRole = UserRole.Student;
+        CurrentStudentName = "Student One";
+        CurrentStudentPhotoDataUrl = null;
+        NotifyStateChanged();
+    }
+
     public string GetStudentInitials()
     {
         var parts = CurrentStudentName
