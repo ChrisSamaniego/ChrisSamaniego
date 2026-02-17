@@ -3,16 +3,20 @@
 <nav class="nav-menu">
     @if (AppState.CurrentRole == UserRole.Student)
     {
-        <a href="/student/home"><span class="nav-icon">🏠</span> Home</a>
-        <a href="/student/classes"><span class="nav-icon">📘</span> Classes</a>
-        <a href="/student/test"><span class="nav-icon">📝</span> Tests</a>
-        <a href="/student/calendar"><span class="nav-icon">📅</span> Calendar</a>
-        <a href="/student/configuration"><span class="nav-icon">⚙️</span> Configuration</a>
+        <a href="/student/classes">My classes</a>
+        <a href="/student/calendar">My calendar</a>
+        <a href="/student/home">Home</a>
+        <a href="/student/test">Test</a>
+        <a href="/student/configurations">Configurations</a>
     }
     else
     {
-        <a href="/"><span class="nav-icon">🏠</span> Dashboard</a>
-        <a href="/admin"><span class="nav-icon">🛠️</span> Administrator</a>
-        <a href="/student/home"><span class="nav-icon">🎓</span> Student</a>
+        <a href="/">Dashboard</a>
+        <a href="/admin">Administrator</a>
+        <a href="/student/home">Student</a>
     }
+<nav class="nav-menu">
+    <a href="/">Dashboard</a>
+    <a href="/admin">Administrator</a>
+    <a href="/student">Student</a>
 </nav>
