@@ -1,0 +1,178 @@
+@page "/admin"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Administrator</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Administrator)
+{
+    <div class="panel">
+        <h2>Administrator area</h2>
+        <p>Switch to <strong>Administrator</strong> role from Dashboard to manage schedules, tests, and student messages.</p>
+    </div>
+}
+else
+{
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h4>Total classes</h4>
+            <strong>@Data.Schedules.Count</strong>
+        </div>
+        <div class="kpi-card">
+            <h4>Tests published</h4>
+            <strong>@Data.Questionnaires.Count</strong>
+        </div>
+        <div class="kpi-card">
+            <h4>Pending messages</h4>
+            <strong>@Data.AdminMessages.Count(m => string.IsNullOrWhiteSpace(m.AdminReply))</strong>
+        </div>
+    </div>
+
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>Create class schedule</h2>
+            <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>Name</label>
+                    <InputText @bind-Value="newSchedule.Name" />
+                    <label>Instructor</label>
+                    <InputText @bind-Value="newSchedule.Instructor" />
+                    <label>Room</label>
+                    <InputText @bind-Value="newSchedule.Room" />
+                    <label>Start</label>
+                    <InputDate @bind-Value="newSchedule.Start" />
+                    <label>End</label>
+                    <InputDate @bind-Value="newSchedule.End" />
+                    <button class="btn" type="submit">Create schedule</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="panel">
+            <h2>Create test</h2>
+            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>Title</label>
+                    <InputText @bind-Value="newQuestionnaire.Title" />
+                    <label>Questions (one per line)</label>
+                    <InputTextArea @bind-Value="questionInput" rows="5" />
+                    <button class="btn" type="submit">Create test</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Student messages</h3>
+        @foreach (var message in Data.AdminMessages.OrderByDescending(m => m.SentAt))
+        {
+            <div class="list-item">
+                <strong>@message.Subject</strong>
+                <div><small>From @message.StudentName · @message.SentAt.ToLocalTime():g</small></div>
+                <p>@message.Content</p>
+
+                @if (string.IsNullOrWhiteSpace(message.AdminReply))
+                {
+                    <div class="form-grid">
+                        <InputTextArea Value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)" rows="3" placeholder="Write reply to student..." />
+                        <button class="btn" @onclick="() => Reply(message.Id)">Send reply</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="message-reply">
+                        <strong>Administrator reply</strong>
+                        <p>@message.AdminReply</p>
+                        <small>@message.RepliedAt?.ToLocalTime():g</small>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <h3>Existing schedules</h3>
+        @foreach (var schedule in Data.Schedules)
+        {
+            <div class="list-item">
+                <strong>@schedule.Name</strong> - @schedule.Instructor (@schedule.Room)
+                <div>@schedule.Start:g - @schedule.End:g</div>
+                <small>Assigned: @string.Join(", ", schedule.AssignedStudents.DefaultIfEmpty("none"))</small>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private ClassSchedule newSchedule = new()
+    {
+        Start = DateTime.Today,
+        End = DateTime.Today.AddDays(1)
+    };
+
+    private Questionnaire newQuestionnaire = new();
+    private string questionInput = string.Empty;
+    private readonly Dictionary<Guid, string> replyDrafts = new();
+
+    protected override void OnInitialized()
+    {
+        foreach (var message in Data.AdminMessages)
+        {
+            replyDrafts.TryAdd(message.Id, string.Empty);
+        }
+    }
+
+    private void CreateSchedule()
+    {
+        Data.CreateSchedule(newSchedule);
+        newSchedule = new ClassSchedule
+        {
+            Start = DateTime.Today,
+            End = DateTime.Today.AddDays(1)
+        };
+    }
+
+    private void CreateQuestionnaire()
+    {
+        newQuestionnaire.Questions = questionInput
+            .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        Data.CreateQuestionnaire(newQuestionnaire);
+
+        newQuestionnaire = new Questionnaire();
+        questionInput = string.Empty;
+    }
+
+
+    private string GetReplyDraft(Guid messageId)
+    {
+        if (!replyDrafts.TryGetValue(messageId, out var value))
+        {
+            value = string.Empty;
+            replyDrafts[messageId] = value;
+        }
+
+        return value;
+    }
+
+    private void SetReplyDraft(Guid messageId, string value)
+    {
+        replyDrafts[messageId] = value;
+    }
+
+    private void Reply(Guid messageId)
+    {
+        if (!replyDrafts.TryGetValue(messageId, out var draft))
+        {
+            return;
+        }
+
+        Data.ReplyToMessage(messageId, draft);
+        replyDrafts[messageId] = string.Empty;
+    }
+}

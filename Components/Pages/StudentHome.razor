@@ -1,0 +1,37 @@
+@page "/student/home"
+@inject AppStateService AppState
+
+<PageTitle>Student Home</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel">
+        <h2>Student area</h2>
+        <p>Switch to <strong>Student</strong> role from Dashboard to access your options.</p>
+    </div>
+}
+else
+{
+    <div class="panel">
+        <h2>Welcome, @AppState.CurrentStudentName</h2>
+        <p>Your student workspace is ready. Use the modules below for your daily activities.</p>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h4>Today</h4>
+                <strong>3 classes</strong>
+                <small>Math, English, Physics Lab</small>
+            </div>
+            <div class="kpi-card">
+                <h4>Online classes</h4>
+                <strong>5 videos</strong>
+                <small>Available for this week</small>
+            </div>
+            <div class="kpi-card">
+                <h4>Messages</h4>
+                <strong>1 pending</strong>
+                <small>Awaiting administrator reply</small>
+            </div>
+        </div>
+    </div>
+}
