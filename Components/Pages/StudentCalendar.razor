@@ -11,6 +11,25 @@
 else
 {
     <div class="calendar-shell panel">
+        <aside class="agenda-panel">
+            <h3>@selectedDate.ToString("dddd, MMM d")</h3>
+            @if (selectedClasses.Any())
+            {
+                @foreach (var schedule in selectedClasses)
+                {
+                    <div class="list-item">
+                        <strong>@schedule.Name</strong>
+                        <div>@schedule.Start:t - @schedule.End:t</div>
+                        <small>@schedule.Room · @schedule.Instructor</small>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No classes assigned on this day.</p>
+            }
+        </aside>
+
         <section>
             <div class="calendar-header microsoft-header">
                 <div>
@@ -45,25 +64,6 @@ else
                 }
             </div>
         </section>
-
-        <aside class="agenda-panel">
-            <h3>@selectedDate.ToString("dddd, MMM d")</h3>
-            @if (selectedClasses.Any())
-            {
-                @foreach (var schedule in selectedClasses)
-                {
-                    <div class="list-item">
-                        <strong>@schedule.Name</strong>
-                        <div>@schedule.Start:t - @schedule.End:t</div>
-                        <small>@schedule.Room · @schedule.Instructor</small>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>No classes assigned on this day.</p>
-            }
-        </aside>
     </div>
 }
 
@@ -81,9 +81,17 @@ else
         OpenDay(DateTime.Today);
     }
 
-    private void PreviousMonth() => monthToShow = monthToShow.AddMonths(-1);
+    private void PreviousMonth()
+    {
+        monthToShow = monthToShow.AddMonths(-1);
+        OpenDay(new DateTime(monthToShow.Year, monthToShow.Month, 1));
+    }
 
-    private void NextMonth() => monthToShow = monthToShow.AddMonths(1);
+    private void NextMonth()
+    {
+        monthToShow = monthToShow.AddMonths(1);
+        OpenDay(new DateTime(monthToShow.Year, monthToShow.Month, 1));
+    }
 
     private void Today()
     {
