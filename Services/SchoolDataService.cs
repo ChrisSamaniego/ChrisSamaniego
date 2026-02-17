@@ -46,6 +46,26 @@ public class SchoolDataService
         }
     ];
 
+    public List<AdminMessage> AdminMessages { get; } =
+    [
+        new()
+        {
+            StudentName = "Student One",
+            Subject = "Question about Physics lab",
+            Content = "Can I submit the lab report on Friday instead of Thursday?",
+            SentAt = DateTime.UtcNow.AddHours(-8),
+            AdminReply = "Yes, Friday 5:00 PM is acceptable. Please upload it to the portal.",
+            RepliedAt = DateTime.UtcNow.AddHours(-5)
+        },
+        new()
+        {
+            StudentName = "Student One",
+            Subject = "Need support with schedule",
+            Content = "Can you help me move to the morning math section?",
+            SentAt = DateTime.UtcNow.AddHours(-2)
+        }
+    ];
+
     public void CreateSchedule(ClassSchedule schedule)
     {
         schedule.Id = Guid.NewGuid();
@@ -86,5 +106,28 @@ public class SchoolDataService
         }
 
         questionnaire.Responses.Add(response);
+    }
+
+    public void SendMessageToAdmin(string studentName, string subject, string content)
+    {
+        AdminMessages.Insert(0, new AdminMessage
+        {
+            StudentName = studentName,
+            Subject = subject.Trim(),
+            Content = content.Trim(),
+            SentAt = DateTime.UtcNow
+        });
+    }
+
+    public void ReplyToMessage(Guid messageId, string reply)
+    {
+        var message = AdminMessages.FirstOrDefault(m => m.Id == messageId);
+        if (message is null || string.IsNullOrWhiteSpace(reply))
+        {
+            return;
+        }
+
+        message.AdminReply = reply.Trim();
+        message.RepliedAt = DateTime.UtcNow;
     }
 }
