@@ -97,6 +97,15 @@ body {
     border-color: #e5e8f0;
 }
 
+.nav-menu a.active {
+    background: #ffffff;
+    color: var(--text);
+    border-color: var(--border);
+    margin-right: -0.7rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
 .nav-icon {
     width: 18px;
     height: 18px;
@@ -146,7 +155,7 @@ body {
 }
 
 .icon-btn:hover {
-    background: var(--surface-soft);
+    background: #ffffff;
 }
 
 .icon-badge {
@@ -166,7 +175,7 @@ body {
 }
 
 .content { padding-top: 1rem; display: grid; gap: 1rem; }
-.panel { padding: 1rem; background: #ffffff; }
+.panel { padding: 1rem; background: #ffffff; color: var(--text); }
 
 .btn {
     border: 1px solid var(--border);
@@ -190,7 +199,7 @@ body {
 .list-item {
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: var(--surface-soft);
+    background: #ffffff;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
 }
@@ -296,17 +305,11 @@ input:focus, textarea:focus, select:focus {
 }
 
 .agenda-panel {
-    border: 1px solid #7278d9;
+    border: 1px solid #d1d5de;
     border-radius: 12px;
     padding: 0.8rem;
-    background: linear-gradient(180deg, #656bd8 0%, #5a60d0 100%);
-    color: #fff;
-}
-
-.agenda-panel p,
-.agenda-panel small,
-.agenda-panel h3 {
-    color: #fff;
+    background: #e4e7ed;
+    color: var(--text);
 }
 
 
@@ -320,7 +323,7 @@ input:focus, textarea:focus, select:focus {
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 0.75rem;
-    background: var(--surface-soft);
+    background: #ffffff;
 }
 
 .video-card h3 {
@@ -425,4 +428,18 @@ input:focus, textarea:focus, select:focus {
     border-radius: 50%;
     border: 1px solid var(--border);
     object-fit: cover;
+}
+
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content p,
+.content small,
+.content label,
+.content li,
+.content span,
+.content strong {
+    color: var(--text);
 }
