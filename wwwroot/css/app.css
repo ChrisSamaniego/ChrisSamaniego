@@ -1,11 +1,11 @@
 :root {
-    --bg: #f3f5f8;
+    --bg: #f5f6fa;
     --surface: #ffffff;
-    --surface-soft: #f8f9fb;
-    --text: #1f2328;
-    --muted: #697585;
-    --border: #d9dee5;
-    --accent: #2563eb;
+    --surface-soft: #f3f4f8;
+    --text: #2f3441;
+    --muted: #8b90a0;
+    --border: #eceef3;
+    --accent: #5b61f6;
     --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
@@ -20,7 +20,7 @@ body {
 
 .page {
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 200px 1fr;
     min-height: 100vh;
     gap: 1rem;
     padding: 1rem;
@@ -31,10 +31,14 @@ body {
 .panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
 }
 
-.sidebar { padding: 1rem; }
+.sidebar {
+    padding: 0.9rem 0.7rem;
+    background: #f1f2f6;
+}
+
 .profile-summary {
     display: grid;
     justify-items: center;
@@ -78,17 +82,19 @@ body {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    color: var(--text);
+    color: #666d7b;
     text-decoration: none;
-    padding: 0.6rem 0.7rem;
+    padding: 0.58rem 0.6rem;
     border: 1px solid transparent;
     border-radius: 10px;
+    font-weight: 600;
     transition: all 120ms ease;
 }
 
 .nav-menu a:hover {
-    background: var(--surface-soft);
-    border-color: var(--border);
+    background: #ffffff;
+    color: var(--accent);
+    border-color: #e5e8f0;
 }
 
 .nav-icon {
@@ -107,7 +113,9 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
+    background: #ffffff;
 }
+
 
 .header-actions {
     display: flex;
@@ -158,7 +166,7 @@ body {
 }
 
 .content { padding-top: 1rem; display: grid; gap: 1rem; }
-.panel { padding: 1rem; }
+.panel { padding: 1rem; background: #ffffff; }
 
 .btn {
     border: 1px solid var(--border);
@@ -212,7 +220,7 @@ input:focus, textarea:focus, select:focus {
 /* Microsoft-like month calendar */
 .calendar-shell {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 280px 1fr;
     gap: 1rem;
 }
 
@@ -288,11 +296,19 @@ input:focus, textarea:focus, select:focus {
 }
 
 .agenda-panel {
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1px solid #7278d9;
+    border-radius: 12px;
     padding: 0.8rem;
-    background: #fff;
+    background: linear-gradient(180deg, #656bd8 0%, #5a60d0 100%);
+    color: #fff;
 }
+
+.agenda-panel p,
+.agenda-panel small,
+.agenda-panel h3 {
+    color: #fff;
+}
+
 
 .video-grid {
     display: grid;
