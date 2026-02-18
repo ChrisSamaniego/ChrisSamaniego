@@ -1,0 +1,112 @@
+@page "/"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="panel">
+    <h1>Dashboard overview</h1>
+    <p>Centralized dashboard for schedules, tests, online classes, and communication.</p>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h4>Attendance</h4>
+            <strong>96%</strong>
+            <small>Current month average</small>
+        </div>
+        <div class="kpi-card">
+            <h4>Upcoming tests</h4>
+            <strong>2</strong>
+            <small>Next 7 days</small>
+        </div>
+        <div class="kpi-card">
+            <h4>Unread contacts</h4>
+            <strong>1</strong>
+            <small>From administration</small>
+        </div>
+    </div>
+
+    <div class="panel course-chart-panel">
+        <h3>Course timeline and result</h3>
+        @foreach (var course in CourseChart)
+        {
+            <div class="course-row">
+                <div class="course-meta">
+                    <strong>@course.Name</strong>
+                    <small>@course.RemainingDays day(s) remaining</small>
+                </div>
+                <div class="course-bar-track">
+                    <div class="course-bar-fill" style="width:@course.BarWidth%"></div>
+                </div>
+                <span class="status-tag @(course.Passed ? "passed" : "not-passed")">
+                    @(course.Passed ? "Pass" : "Not pass")
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="role-switcher">
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
+        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
+    </div>
+
+    @if (AppState.CurrentRole == UserRole.Student)
+    {
+        <EditForm Model="studentState" OnValidSubmit="SaveStudentName">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label for="studentName">Student name</label>
+                <InputText id="studentName" @bind-Value="studentState.Name" />
+                <button class="btn" type="submit">Save profile</button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private StudentState studentState = new() { Name = "Student One" };
+
+    private readonly Dictionary<string, int> courseGrades = new()
+    {
+        ["Mathematics 101"] = 84,
+        ["World History"] = 62,
+        ["Physics Lab"] = 78
+    };
+
+    private IEnumerable<CourseItem> CourseChart
+    {
+        get
+        {
+            var courses = Data.Schedules
+                .Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase))
+                .Select(s => new
+                {
+                    s.Name,
+                    RemainingDays = Math.Max(0, (s.Start.Date - DateTime.Today).Days + 1),
+                    Passed = courseGrades.TryGetValue(s.Name, out var grade) && grade >= 70
+                })
+                .ToList();
+
+            var maxRemaining = Math.Max(1, courses.DefaultIfEmpty().Max(c => c?.RemainingDays ?? 1));
+
+            return courses.Select(c => new CourseItem(
+                c.Name,
+                c.RemainingDays,
+                c.Passed,
+                Math.Max(8, (int)Math.Round((double)c.RemainingDays / maxRemaining * 100))));
+        }
+    }
+
+    private void SaveStudentName()
+    {
+        AppState.SetStudentName(studentState.Name);
+    }
+
+    private class StudentState
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+
+    private record CourseItem(string Name, int RemainingDays, bool Passed, int BarWidth);
+}
