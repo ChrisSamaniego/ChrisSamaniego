@@ -340,6 +340,24 @@ input:focus, textarea:focus, select:focus {
 
 .error-text { color: #b91c1c; font-weight: 600; }
 
+
+.dashboard-layout {
+    display: grid;
+    gap: 1rem;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.dashboard-content-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 2fr 1fr;
+}
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -408,6 +426,14 @@ input:focus, textarea:focus, select:focus {
     }
 
     .course-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+    }
+
+    .dashboard-content-grid {
         grid-template-columns: 1fr;
     }
 }

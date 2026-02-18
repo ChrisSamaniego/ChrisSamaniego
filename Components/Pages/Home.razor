@@ -2,65 +2,76 @@
 @inject AppStateService AppState
 @inject SchoolDataService Data
 
-<PageTitle>Dashboard</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<div class="panel">
-    <h1>Dashboard overview</h1>
-    <p>Centralized dashboard for schedules, tests, online classes, and communication.</p>
+<div class="dashboard-layout">
+    <section class="panel dashboard-header">
+        <div>
+            <h1>Home</h1>
+            <p>Dashboard overview with courses, timeline, and communication status.</p>
+        </div>
 
-    <div class="kpi-grid">
-        <div class="kpi-card">
+        <div class="role-switcher">
+            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
+            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
+        </div>
+    </section>
+
+    <section class="kpi-grid">
+        <article class="kpi-card">
             <h4>Attendance</h4>
             <strong>96%</strong>
             <small>Current month average</small>
-        </div>
-        <div class="kpi-card">
+        </article>
+        <article class="kpi-card">
             <h4>Upcoming tests</h4>
             <strong>2</strong>
             <small>Next 7 days</small>
-        </div>
-        <div class="kpi-card">
+        </article>
+        <article class="kpi-card">
             <h4>Unread contacts</h4>
             <strong>1</strong>
             <small>From administration</small>
-        </div>
-    </div>
+        </article>
+        <article class="kpi-card">
+            <h4>Classes this week</h4>
+            <strong>@AssignedCourses.Count()</strong>
+            <small>Assigned to @AppState.CurrentStudentName</small>
+        </article>
+    </section>
 
-    <div class="panel course-chart-panel">
-        <h3>Course timeline and result</h3>
-        @foreach (var course in CourseChart)
-        {
-            <div class="course-row">
-                <div class="course-meta">
-                    <strong>@course.Name</strong>
-                    <small>@course.RemainingDays day(s) remaining</small>
+    <section class="dashboard-content-grid">
+        <article class="panel course-chart-panel">
+            <h3>Course timeline and result</h3>
+            @foreach (var course in CourseChart)
+            {
+                <div class="course-row">
+                    <div class="course-meta">
+                        <strong>@course.Name</strong>
+                        <small>@course.RemainingDays day(s) remaining</small>
+                    </div>
+                    <div class="course-bar-track">
+                        <div class="course-bar-fill" style="width:@course.BarWidth%"></div>
+                    </div>
+                    <span class="status-tag @(course.Passed ? "passed" : "not-passed")">
+                        @(course.Passed ? "Pass" : "Not pass")
+                    </span>
                 </div>
-                <div class="course-bar-track">
-                    <div class="course-bar-fill" style="width:@course.BarWidth%"></div>
+            }
+        </article>
+
+        <article class="panel">
+            <h3>Student profile quick edit</h3>
+            <EditForm Model="studentState" OnValidSubmit="SaveStudentName">
+                <DataAnnotationsValidator />
+                <div class="form-grid">
+                    <label for="studentName">Student name</label>
+                    <InputText id="studentName" @bind-Value="studentState.Name" />
+                    <button class="btn" type="submit">Save profile</button>
                 </div>
-                <span class="status-tag @(course.Passed ? "passed" : "not-passed")">
-                    @(course.Passed ? "Pass" : "Not pass")
-                </span>
-            </div>
-        }
-    </div>
-
-    <div class="role-switcher">
-        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
-        <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
-    </div>
-
-    @if (AppState.CurrentRole == UserRole.Student)
-    {
-        <EditForm Model="studentState" OnValidSubmit="SaveStudentName">
-            <DataAnnotationsValidator />
-            <div class="form-grid">
-                <label for="studentName">Student name</label>
-                <InputText id="studentName" @bind-Value="studentState.Name" />
-                <button class="btn" type="submit">Save profile</button>
-            </div>
-        </EditForm>
-    }
+            </EditForm>
+        </article>
+    </section>
 </div>
 
 @code {
@@ -73,12 +84,14 @@
         ["Physics Lab"] = 78
     };
 
+    private IEnumerable<ClassSchedule> AssignedCourses => Data.Schedules
+        .Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase));
+
     private IEnumerable<CourseItem> CourseChart
     {
         get
         {
-            var courses = Data.Schedules
-                .Where(s => s.AssignedStudents.Contains(AppState.CurrentStudentName, StringComparer.OrdinalIgnoreCase))
+            var courses = AssignedCourses
                 .Select(s => new
                 {
                     s.Name,
