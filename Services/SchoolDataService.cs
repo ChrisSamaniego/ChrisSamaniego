@@ -48,6 +48,19 @@ public class SchoolDataService
         }
     ];
 
+
+    public List<PortalDocument> Documents { get; } =
+    [
+        new()
+        {
+            FileName = "School-Rules.pdf",
+            ContentType = "application/pdf",
+            Base64Content = "VGhpcyBpcyBhIHNhbXBsZSBkb2N1bWVudCBmaWxlLg==",
+            UploadedBy = "Student One",
+            UploadedAt = DateTime.UtcNow.AddDays(-1)
+        }
+    ];
+
     public List<AdminMessage> AdminMessages { get; } =
     [
         new()
@@ -132,4 +145,18 @@ public class SchoolDataService
         message.AdminReply = reply.Trim();
         message.RepliedAt = DateTime.UtcNow;
     }
+
+
+    public void UploadDocument(string fileName, string contentType, string base64Content, string uploadedBy)
+    {
+        Documents.Insert(0, new PortalDocument
+        {
+            FileName = fileName,
+            ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType,
+            Base64Content = base64Content,
+            UploadedBy = uploadedBy,
+            UploadedAt = DateTime.UtcNow
+        });
+    }
+
 }

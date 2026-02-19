@@ -98,7 +98,7 @@ body {
 }
 
 .nav-menu a.active {
-    background: #ffffff;
+    background: var(--bg);
     color: var(--text);
     border-color: var(--border);
     margin-right: -0.7rem;
@@ -436,6 +436,11 @@ input:focus, textarea:focus, select:focus {
     .dashboard-content-grid {
         grid-template-columns: 1fr;
     }
+
+    .document-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 
@@ -520,4 +525,12 @@ input:focus, textarea:focus, select:focus {
 .status-tag.not-passed {
     background: #fde8e8;
     color: #9f1f1f;
+}
+
+
+.document-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
 }
