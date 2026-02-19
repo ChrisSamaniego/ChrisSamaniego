@@ -61,6 +61,14 @@ public class SchoolDataService
         }
     ];
 
+
+    public List<CourseFee> CourseFees { get; } =
+    [
+        new() { CourseName = "Mathematics 101", Amount = 240m, Currency = "USD", BillingPeriod = "Monthly" },
+        new() { CourseName = "World History", Amount = 180m, Currency = "USD", BillingPeriod = "Monthly" },
+        new() { CourseName = "Physics Lab", Amount = 210m, Currency = "USD", BillingPeriod = "Monthly" }
+    ];
+
     public List<AdminMessage> AdminMessages { get; } =
     [
         new()

@@ -35,11 +35,34 @@ else
                 </div>
             }
         </div>
+
+        <div class="profile-upload-block">
+            <h3>Change password</h3>
+            <EditForm Model="passwordModel" OnValidSubmit="ChangePassword">
+                <DataAnnotationsValidator />
+                <div class="form-grid">
+                    <label for="currentPassword">Current password</label>
+                    <InputText id="currentPassword" type="password" @bind-Value="passwordModel.CurrentPassword" />
+                    <label for="newPassword">New password</label>
+                    <InputText id="newPassword" type="password" @bind-Value="passwordModel.NewPassword" />
+                    <label for="confirmPassword">Confirm new password</label>
+                    <InputText id="confirmPassword" type="password" @bind-Value="passwordModel.ConfirmPassword" />
+                    <button class="btn" type="submit">Update password</button>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrWhiteSpace(passwordMessage))
+            {
+                <p class="status-text">@passwordMessage</p>
+            }
+        </div>
     </div>
 }
 
 @code {
     private StudentConfig model = new() { Name = "Student One" };
+    private PasswordConfig passwordModel = new();
+    private string passwordMessage = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -73,9 +96,45 @@ else
         AppState.SetStudentPhoto(null);
     }
 
+    private void ChangePassword()
+    {
+        if (string.IsNullOrWhiteSpace(passwordModel.CurrentPassword))
+        {
+            passwordMessage = "Please enter your current password.";
+            return;
+        }
+
+        if (passwordModel.NewPassword.Length < 6)
+        {
+            passwordMessage = "New password must contain at least 6 characters.";
+            return;
+        }
+
+        if (!string.Equals(passwordModel.NewPassword, passwordModel.ConfirmPassword, StringComparison.Ordinal))
+        {
+            passwordMessage = "New password and confirmation do not match.";
+            return;
+        }
+
+        passwordModel = new PasswordConfig();
+        passwordMessage = "Password updated successfully.";
+    }
+
     private class StudentConfig
     {
         [Required]
         public string Name { get; set; } = string.Empty;
+    }
+
+    private class PasswordConfig
+    {
+        [Required]
+        public string CurrentPassword { get; set; } = string.Empty;
+
+        [Required]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required]
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
