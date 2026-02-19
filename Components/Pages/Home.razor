@@ -1,0 +1,18 @@
+@page "/"
+@inject NavigationManager Navigation
+
+<PageTitle>Home</PageTitle>
+
+<div class="panel">
+    <p>Redirecting to student home...</p>
+</div>
+
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Navigation.NavigateTo("/student/home", replace: true);
+        }
+    }
+}
