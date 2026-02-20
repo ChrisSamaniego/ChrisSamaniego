@@ -11,7 +11,7 @@
         <h1>Welcome back</h1>
         <p>Sign in to continue to your dashboard.</p>
 
-        <EditForm Model="loginModel" OnSubmit="HandleLogin" FormName="login-form">
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="login-form">
             <DataAnnotationsValidator />
 
             <div class="login-field">
@@ -37,7 +37,8 @@
 </div>
 
 @code {
-    private LoginModel loginModel = new();
+    [SupplyParameterFromForm(FormName = "login-form")]
+    private LoginModel loginModel { get; set; } = new();
     private string errorMessage = string.Empty;
 
     protected override void OnAfterRender(bool firstRender)

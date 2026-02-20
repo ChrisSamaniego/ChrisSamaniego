@@ -13,8 +13,8 @@ public class AppStateService
 
     public bool Login(string username, string password)
     {
-        var isValid = string.Equals(username?.Trim(), "test", StringComparison.Ordinal)
-                      && string.Equals(password, "test", StringComparison.Ordinal);
+        var isValid = string.Equals(username?.Trim(), "test", StringComparison.OrdinalIgnoreCase)
+                      && string.Equals(password?.Trim(), "test", StringComparison.Ordinal);
 
         if (!isValid)
         {
