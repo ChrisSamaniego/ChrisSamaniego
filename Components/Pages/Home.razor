@@ -1,0 +1,71 @@
+@page "/"
+@layout SchoolPortal.Components.Layout.LoginLayout
+@inject AppStateService AppState
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-shell">
+    <div class="login-card">
+        <div class="login-brand">School Portal</div>
+        <h1>Welcome back</h1>
+        <p>Sign in to continue to your dashboard.</p>
+
+        <EditForm Model="loginModel" OnSubmit="HandleLogin" FormName="login-form">
+            <DataAnnotationsValidator />
+
+            <div class="login-field">
+                <label for="username">Username</label>
+                <InputText id="username" @bind-Value="loginModel.Username" />
+            </div>
+
+            <div class="login-field">
+                <label for="password">Password</label>
+                <InputText id="password" type="password" @bind-Value="loginModel.Password" />
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <p class="login-error" role="alert">@errorMessage</p>
+            }
+
+            <button class="login-btn" type="submit">Sign in</button>
+        </EditForm>
+
+        <small class="login-hint">Demo credentials: <strong>test</strong> / <strong>test</strong></small>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string errorMessage = string.Empty;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && AppState.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/student/home", replace: true);
+        }
+    }
+
+    private void HandleLogin()
+    {
+        if (AppState.Login(loginModel.Username, loginModel.Password))
+        {
+            errorMessage = string.Empty;
+            Navigation.NavigateTo("/student/home", replace: true);
+            return;
+        }
+
+        errorMessage = "Invalid username or password.";
+    }
+
+    private class LoginModel
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}
