@@ -12,7 +12,7 @@ else
 {
     <div class="panel">
         <h2>Configurations</h2>
-        <EditForm Model="model" OnValidSubmit="Save">
+        <EditForm Model="model" OnValidSubmit="Save" FormName="student-config-name-form">
             <DataAnnotationsValidator />
             <div class="form-grid">
                 <label for="studentName">Display name</label>
@@ -38,7 +38,7 @@ else
 
         <div class="profile-upload-block">
             <h3>Change password</h3>
-            <EditForm Model="passwordModel" OnValidSubmit="ChangePassword">
+            <EditForm Model="passwordModel" OnValidSubmit="ChangePassword" FormName="student-config-password-form">
                 <DataAnnotationsValidator />
                 <div class="form-grid">
                     <label for="currentPassword">Current password</label>

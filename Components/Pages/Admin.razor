@@ -31,7 +31,7 @@ else
     <div class="responsive-grid">
         <div class="panel">
             <h2>Create class schedule</h2>
-            <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule">
+            <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule" FormName="admin-schedule-form">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">
@@ -52,7 +52,7 @@ else
 
         <div class="panel">
             <h2>Create test</h2>
-            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire">
+            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire" FormName="admin-questionnaire-form">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">

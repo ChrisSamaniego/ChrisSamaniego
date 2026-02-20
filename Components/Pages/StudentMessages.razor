@@ -13,7 +13,7 @@ else
     <div class="responsive-grid">
         <div class="panel">
             <h2>Contact administrator</h2>
-            <EditForm Model="newMessage" OnValidSubmit="SendMessage">
+            <EditForm Model="newMessage" OnValidSubmit="SendMessage" FormName="student-message-form">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">
