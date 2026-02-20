@@ -1,8 +1,11 @@
 @inherits LayoutComponentBase
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject NavigationManager Navigation
 @implements IDisposable
 
+@if (AppState.IsAuthenticated)
+{
 <div class="page">
     <aside class="sidebar">
         <div class="profile-summary">
@@ -56,6 +59,7 @@
         </section>
     </main>
 </div>
+}
 
 @code {
     private int PendingMessageCount => Data.AdminMessages
@@ -69,6 +73,14 @@
     protected override void OnInitialized()
     {
         AppState.OnChange += StateHasChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!AppState.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/", replace: true);
+        }
     }
 
     private void Logout()
