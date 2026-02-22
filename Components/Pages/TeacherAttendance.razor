@@ -1,0 +1,55 @@
+@page "/teacher/attendance"
+@inject AppStateService AppState
+
+<PageTitle>Take Attendance</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Teacher)
+{
+    <div class="panel"><p>Switch to Teacher role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>Take Attendance</h2>
+        <p>Use this page to mark attendance for today.</p>
+
+        <table class="fees-table">
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var entry in attendance)
+            {
+                <tr>
+                    <td>@entry.Student</td>
+                    <td>
+                        <select @bind="entry.Status">
+                            <option>Present</option>
+                            <option>Absent</option>
+                            <option>Late</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private readonly List<AttendanceRow> attendance =
+    [
+        new() { Student = "Student One", Status = "Present" },
+        new() { Student = "Student Two", Status = "Present" },
+        new() { Student = "Student Three", Status = "Absent" }
+    ];
+
+    private class AttendanceRow
+    {
+        public string Student { get; set; } = string.Empty;
+        public string Status { get; set; } = "Present";
+    }
+}
