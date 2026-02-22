@@ -13,17 +13,40 @@ public class AppStateService
 
     public bool Login(string username, string password)
     {
-        var isValid = string.Equals(username?.Trim(), "test", StringComparison.OrdinalIgnoreCase)
-                      && string.Equals(password?.Trim(), "test", StringComparison.Ordinal);
+        var normalizedUsername = username?.Trim() ?? string.Empty;
+        var normalizedPassword = password?.Trim() ?? string.Empty;
 
-        if (!isValid)
+        if (string.Equals(normalizedUsername, "test", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(normalizedPassword, "test", StringComparison.Ordinal))
         {
-            return false;
+            IsAuthenticated = true;
+            CurrentRole = UserRole.Student;
+            CurrentStudentName = "Student One";
+            NotifyStateChanged();
+            return true;
         }
 
-        IsAuthenticated = true;
-        NotifyStateChanged();
-        return true;
+        if (string.Equals(normalizedUsername, "teacher", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(normalizedPassword, "teacher", StringComparison.Ordinal))
+        {
+            IsAuthenticated = true;
+            CurrentRole = UserRole.Teacher;
+            CurrentStudentName = "Teacher";
+            NotifyStateChanged();
+            return true;
+        }
+
+        if (string.Equals(normalizedUsername, "admin", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(normalizedPassword, "admin", StringComparison.Ordinal))
+        {
+            IsAuthenticated = true;
+            CurrentRole = UserRole.Administrator;
+            CurrentStudentName = "Administrator";
+            NotifyStateChanged();
+            return true;
+        }
+
+        return false;
     }
 
     public void SetRole(UserRole role)

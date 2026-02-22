@@ -1,0 +1,57 @@
+@page "/admin/courses"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Create Courses</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Administrator)
+{
+    <div class="panel"><p>Switch to Administrator role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>Create Courses</h2>
+        <EditForm Model="newCourse" OnValidSubmit="CreateCourse" FormName="admin-course-form">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label>Code</label>
+                <InputText @bind-Value="newCourse.Code" />
+                <label>Name</label>
+                <InputText @bind-Value="newCourse.Name" />
+                <label>Credits</label>
+                <InputNumber @bind-Value="newCourse.Credits" />
+                <button class="btn" type="submit">Create course</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="panel">
+        <h3>Courses</h3>
+        @foreach (var course in Data.Courses)
+        {
+            <div class="list-item"><strong>@course.Code</strong> - @course.Name (@course.Credits credits)</div>
+        }
+    </div>
+}
+
+@code {
+    private CourseCatalogItem newCourse = new();
+
+    private void CreateCourse()
+    {
+        if (string.IsNullOrWhiteSpace(newCourse.Code) || string.IsNullOrWhiteSpace(newCourse.Name) || newCourse.Credits <= 0)
+        {
+            return;
+        }
+
+        Data.CreateCourse(new CourseCatalogItem
+        {
+            Code = newCourse.Code.Trim(),
+            Name = newCourse.Name.Trim(),
+            Credits = newCourse.Credits
+        });
+
+        newCourse = new CourseCatalogItem();
+    }
+}

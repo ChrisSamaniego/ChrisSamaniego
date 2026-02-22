@@ -32,7 +32,7 @@
             <button class="login-btn" type="submit">Sign in</button>
         </EditForm>
 
-        <small class="login-hint">Demo credentials: <strong>test</strong> / <strong>test</strong></small>
+        <small class="login-hint">Demo credentials: Student <strong>test/test</strong>, Teacher <strong>teacher/teacher</strong>, Admin <strong>admin/admin</strong></small>
     </div>
 </div>
 
@@ -45,7 +45,7 @@
     {
         if (firstRender && AppState.IsAuthenticated)
         {
-            Navigation.NavigateTo("/student/home", replace: true);
+            Navigation.NavigateTo(GetHomeRoute(), replace: true);
         }
     }
 
@@ -54,13 +54,23 @@
         if (AppState.Login(loginModel.Username, loginModel.Password))
         {
             errorMessage = string.Empty;
-            Navigation.NavigateTo("/student/home", replace: true);
+            Navigation.NavigateTo(GetHomeRoute(), replace: true);
             return;
         }
 
         errorMessage = "Invalid username or password.";
     }
 
+
+    private string GetHomeRoute()
+    {
+        return AppState.CurrentRole switch
+        {
+            UserRole.Teacher => "/teacher/attendance",
+            UserRole.Administrator => "/admin",
+            _ => "/student/home"
+        };
+    }
     private class LoginModel
     {
         [Required]

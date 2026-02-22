@@ -69,6 +69,14 @@ public class SchoolDataService
         new() { CourseName = "Physics Lab", Amount = 210m, Currency = "USD", BillingPeriod = "Monthly" }
     ];
 
+
+    public List<CourseCatalogItem> Courses { get; } =
+    [
+        new() { Code = "MATH101", Name = "Mathematics 101", Credits = 3 },
+        new() { Code = "HIST201", Name = "World History", Credits = 2 },
+        new() { Code = "PHYS110", Name = "Physics Lab", Credits = 3 }
+    ];
+
     public List<AdminMessage> AdminMessages { get; } =
     [
         new()
@@ -129,6 +137,18 @@ public class SchoolDataService
         }
 
         questionnaire.Responses.Add(response);
+    }
+
+
+    public void CreateCourse(CourseCatalogItem course)
+    {
+        course.Id = Guid.NewGuid();
+        Courses.Insert(0, course);
+    }
+
+    public void AddCourseFee(CourseFee courseFee)
+    {
+        CourseFees.Insert(0, courseFee);
     }
 
     public void SendMessageToAdmin(string studentName, string subject, string content)
