@@ -1,0 +1,39 @@
+@page "/student/fees"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+
+<PageTitle>Course Fees</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>Switch to Student role.</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>Course fees</h2>
+        <p>Overview of school course fees.</p>
+
+        <div class="fees-table-wrap">
+            <table class="fees-table">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Fee</th>
+                        <th>Period</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fee in Data.CourseFees)
+                    {
+                        <tr>
+                            <td>@fee.CourseName</td>
+                            <td>@fee.Currency @fee.Amount.ToString("0.00")</td>
+                            <td>@fee.BillingPeriod</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
