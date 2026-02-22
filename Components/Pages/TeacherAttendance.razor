@@ -17,7 +17,8 @@ else
             <thead>
             <tr>
                 <th>Student</th>
-                <th>Status</th>
+                <th>Present</th>
+                <th>Comments</th>
             </tr>
             </thead>
             <tbody>
@@ -26,11 +27,10 @@ else
                 <tr>
                     <td>@entry.Student</td>
                     <td>
-                        <select @bind="entry.Status">
-                            <option>Present</option>
-                            <option>Absent</option>
-                            <option>Late</option>
-                        </select>
+                        <input type="checkbox" @bind="entry.IsPresent" aria-label="Mark @entry.Student present" />
+                    </td>
+                    <td>
+                        <InputText @bind-Value="entry.Comments" placeholder="Optional comments" />
                     </td>
                 </tr>
             }
@@ -42,14 +42,15 @@ else
 @code {
     private readonly List<AttendanceRow> attendance =
     [
-        new() { Student = "Student One", Status = "Present" },
-        new() { Student = "Student Two", Status = "Present" },
-        new() { Student = "Student Three", Status = "Absent" }
+        new() { Student = "Student One", IsPresent = true },
+        new() { Student = "Student Two", IsPresent = true },
+        new() { Student = "Student Three", IsPresent = false }
     ];
 
     private class AttendanceRow
     {
         public string Student { get; set; } = string.Empty;
-        public string Status { get; set; } = "Present";
+        public bool IsPresent { get; set; }
+        public string Comments { get; set; } = string.Empty;
     }
 }
