@@ -78,7 +78,7 @@ else
                 @if (string.IsNullOrWhiteSpace(message.AdminReply))
                 {
                     <div class="form-grid">
-                        <InputTextArea Value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)" rows="3" placeholder="Write reply to student..." />
+                        <textarea rows="3" placeholder="Write reply to student..." value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)"></textarea>
                         <button class="btn" @onclick="() => Reply(message.Id)">Send reply</button>
                     </div>
                 }
