@@ -1,26 +1,27 @@
 @page "/student/fees"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Course Fees</PageTitle>
+<PageTitle>@Lang.T("Course Fees", "Pagos de cursos")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>Course fees</h2>
-        <p>Overview of school course fees.</p>
+        <h2>@Lang.T("Course fees", "Pagos de cursos")</h2>
+        <p>@Lang.T("Overview of school course fees.", "Resumen de pagos de cursos escolares.")</p>
 
         <div class="fees-table-wrap">
             <table class="fees-table">
                 <thead>
                     <tr>
-                        <th>Course</th>
-                        <th>Fee</th>
-                        <th>Period</th>
+                        <th>@Lang.T("Course", "Curso")</th>
+                        <th>@Lang.T("Fee", "Pago")</th>
+                        <th>@Lang.T("Period", "Periodo")</th>
                     </tr>
                 </thead>
                 <tbody>

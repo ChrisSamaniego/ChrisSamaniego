@@ -1,29 +1,30 @@
 @page "/student/configurations"
 @page "/student/configuration"
 @inject AppStateService AppState
+@inject LanguageService Lang
 
-<PageTitle>Configurations</PageTitle>
+<PageTitle>@Lang.T("Configurations", "Configuración")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>Configurations</h2>
+        <h2>@Lang.T("Configurations", "Configuración")</h2>
         <EditForm Model="model" OnValidSubmit="Save" FormName="student-config-name-form">
             <DataAnnotationsValidator />
             <div class="form-grid">
-                <label for="studentName">Display name</label>
+                <label for="studentName">@Lang.T("Display name", "Nombre visible")</label>
                 <InputText id="studentName" @bind-Value="model.Name" />
-                <button class="btn" type="submit">Save</button>
+                <button class="btn" type="submit">@Lang.T("Save", "Guardar")</button>
             </div>
         </EditForm>
 
         <div class="profile-upload-block">
-            <h3>Profile photo</h3>
-            <p>Upload your profile image. If no photo is uploaded, initials will be shown in the circle.</p>
+            <h3>@Lang.T("Profile photo", "Foto de perfil")</h3>
+            <p>@Lang.T("Upload your profile image. If no photo is uploaded, initials will be shown in the circle.", "Sube tu imagen de perfil. Si no se sube una foto, se mostrarán iniciales en el círculo.")</p>
 
             <InputFile OnChange="OnFileSelected" accept="image/*" />
 
@@ -31,23 +32,23 @@ else
             {
                 <div class="profile-preview">
                     <img src="@AppState.CurrentStudentPhotoDataUrl" alt="Profile preview" />
-                    <button type="button" class="btn" @onclick="RemovePhoto">Remove photo</button>
+                    <button type="button" class="btn" @onclick="RemovePhoto">@Lang.T("Remove photo", "Eliminar foto")</button>
                 </div>
             }
         </div>
 
         <div class="profile-upload-block">
-            <h3>Change password</h3>
+            <h3>@Lang.T("Change password", "Cambiar contraseña")</h3>
             <EditForm Model="passwordModel" OnValidSubmit="ChangePassword" FormName="student-config-password-form">
                 <DataAnnotationsValidator />
                 <div class="form-grid">
-                    <label for="currentPassword">Current password</label>
+                    <label for="currentPassword">@Lang.T("Current password", "Contraseña actual")</label>
                     <InputText id="currentPassword" type="password" @bind-Value="passwordModel.CurrentPassword" />
-                    <label for="newPassword">New password</label>
+                    <label for="newPassword">@Lang.T("New password", "Nueva contraseña")</label>
                     <InputText id="newPassword" type="password" @bind-Value="passwordModel.NewPassword" />
-                    <label for="confirmPassword">Confirm new password</label>
+                    <label for="confirmPassword">@Lang.T("Confirm new password", "Confirmar nueva contraseña")</label>
                     <InputText id="confirmPassword" type="password" @bind-Value="passwordModel.ConfirmPassword" />
-                    <button class="btn" type="submit">Update password</button>
+                    <button class="btn" type="submit">@Lang.T("Update password", "Actualizar contraseña")</button>
                 </div>
             </EditForm>
 
@@ -100,24 +101,24 @@ else
     {
         if (string.IsNullOrWhiteSpace(passwordModel.CurrentPassword))
         {
-            passwordMessage = "Please enter your current password.";
+            passwordMessage = Lang.T("Please enter your current password.", "Ingresa tu contraseña actual.");
             return;
         }
 
         if (passwordModel.NewPassword.Length < 6)
         {
-            passwordMessage = "New password must contain at least 6 characters.";
+            passwordMessage = Lang.T("New password must contain at least 6 characters.", "La nueva contraseña debe contener al menos 6 caracteres.");
             return;
         }
 
         if (!string.Equals(passwordModel.NewPassword, passwordModel.ConfirmPassword, StringComparison.Ordinal))
         {
-            passwordMessage = "New password and confirmation do not match.";
+            passwordMessage = Lang.T("New password and confirmation do not match.", "La nueva contraseña y la confirmación no coinciden.");
             return;
         }
 
         passwordModel = new PasswordConfig();
-        passwordMessage = "Password updated successfully.";
+        passwordMessage = Lang.T("Password updated successfully.", "Contraseña actualizada correctamente.");
     }
 
     private class StudentConfig

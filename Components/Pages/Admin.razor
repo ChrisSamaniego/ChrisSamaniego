@@ -36,15 +36,15 @@ else
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">
-                    <label>Name</label>
+                    <label>@Lang.T("Name", "Nombre")</label>
                     <InputText @bind-Value="newSchedule.Name" />
-                    <label>Instructor</label>
+                    <label>@Lang.T("Instructor", "Instructor")</label>
                     <InputText @bind-Value="newSchedule.Instructor" />
-                    <label>Room</label>
+                    <label>@Lang.T("Room", "Aula")</label>
                     <InputText @bind-Value="newSchedule.Room" />
-                    <label>Start</label>
+                    <label>@Lang.T("Start", "Inicio")</label>
                     <InputDate @bind-Value="newSchedule.Start" />
-                    <label>End</label>
+                    <label>@Lang.T("End", "Fin")</label>
                     <InputDate @bind-Value="newSchedule.End" />
                     <button class="btn" type="submit">@Lang.T("Create schedule", "Crear horario")</button>
                 </div>
@@ -57,9 +57,9 @@ else
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-grid">
-                    <label>Title</label>
+                    <label>@Lang.T("Title", "Título")</label>
                     <InputText @bind-Value="newQuestionnaire.Title" />
-                    <label>Questions (one per line)</label>
+                    <label>@Lang.T("Questions (one per line)", "Preguntas (una por línea)")</label>
                     <InputTextArea @bind-Value="questionInput" rows="5" />
                     <button class="btn" type="submit">@Lang.T("Create test", "Crear examen")</button>
                 </div>
@@ -73,7 +73,7 @@ else
         {
             <div class="list-item">
                 <strong>@message.Subject</strong>
-                <div><small>From @message.StudentName · @message.SentAt.ToLocalTime():g</small></div>
+                <div><small>@Lang.T("From", "De") @message.StudentName · @message.SentAt.ToLocalTime():g</small></div>
                 <p>@message.Content</p>
 
                 @if (string.IsNullOrWhiteSpace(message.AdminReply))
@@ -102,7 +102,7 @@ else
             <div class="list-item">
                 <strong>@schedule.Name</strong> - @schedule.Instructor (@schedule.Room)
                 <div>@schedule.Start:g - @schedule.End:g</div>
-                <small>Assigned: @string.Join(", ", schedule.AssignedStudents.DefaultIfEmpty("none"))</small>
+                <small>@Lang.T("Assigned:", "Asignado:") @string.Join(", ", schedule.AssignedStudents.DefaultIfEmpty(Lang.T("none", "ninguno")))</small>
             </div>
         }
     </div>

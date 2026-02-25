@@ -1,74 +1,75 @@
 @page "/student/home"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Student Home</PageTitle>
+<PageTitle>@Lang.T("Student Home", "Inicio del estudiante")</PageTitle>
 
 <div class="dashboard-layout">
     <section class="panel dashboard-header">
         <div>
-            <h1>Home</h1>
-            <p>Dashboard overview with courses, timeline, and communication status.</p>
+            <h1>@Lang.T("Home", "Inicio")</h1>
+            <p>@Lang.T("Dashboard overview with courses, timeline, and communication status.", "Resumen del panel con cursos, cronograma y estado de comunicación.")</p>
         </div>
 
         <div class="role-switcher">
-            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">Administrator</button>
-            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Teacher)">Teacher</button>
-            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">Student</button>
+            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Administrator)">@Lang.T("Administrator", "Administrador")</button>
+            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Teacher)">@Lang.T("Teacher", "Docente")</button>
+            <button class="btn" @onclick="() => AppState.SetRole(UserRole.Student)">@Lang.T("Student", "Estudiante")</button>
         </div>
     </section>
 
     <section class="kpi-grid">
         <article class="kpi-card">
-            <h4>Attendance</h4>
+            <h4>@Lang.T("Attendance", "Asistencia")</h4>
             <strong>96%</strong>
-            <small>Current month average</small>
+            <small>@Lang.T("Current month average", "Promedio del mes actual")</small>
         </article>
         <article class="kpi-card">
-            <h4>Upcoming tests</h4>
+            <h4>@Lang.T("Upcoming tests", "Próximos exámenes")</h4>
             <strong>2</strong>
-            <small>Next 7 days</small>
+            <small>@Lang.T("Next 7 days", "Próximos 7 días")</small>
         </article>
         <article class="kpi-card">
-            <h4>Unread contacts</h4>
+            <h4>@Lang.T("Unread contacts", "Contactos no leídos")</h4>
             <strong>1</strong>
-            <small>From administration</small>
+            <small>@Lang.T("From administration", "De administración")</small>
         </article>
         <article class="kpi-card">
-            <h4>Classes this week</h4>
+            <h4>@Lang.T("Classes this week", "Clases esta semana")</h4>
             <strong>@AssignedCourses.Count()</strong>
-            <small>Assigned to @AppState.CurrentStudentName</small>
+            <small>@Lang.T("Assigned to", "Asignado a") @AppState.CurrentStudentName</small>
         </article>
     </section>
 
     <section class="dashboard-content-grid">
         <article class="panel course-chart-panel">
-            <h3>Course timeline and result</h3>
+            <h3>@Lang.T("Course timeline and result", "Cronograma y resultado del curso")</h3>
             @foreach (var course in CourseChart)
             {
                 <div class="course-row">
                     <div class="course-meta">
                         <strong>@course.Name</strong>
-                        <small>@course.RemainingDays day(s) remaining</small>
+                        <small>@course.RemainingDays @Lang.T("day(s) remaining", "día(s) restantes")</small>
                     </div>
                     <div class="course-bar-track">
                         <div class="course-bar-fill" style="width:@course.BarWidth%"></div>
                     </div>
                     <span class="status-tag @(course.Passed ? "passed" : "not-passed")">
-                        @(course.Passed ? "Pass" : "Not pass")
+                        @(course.Passed ? Lang.T("Pass", "Aprobado") : Lang.T("Not pass", "No aprobado"))
                     </span>
                 </div>
             }
         </article>
 
         <article class="panel">
-            <h3>Student profile quick edit</h3>
+            <h3>@Lang.T("Student profile quick edit", "Edición rápida del perfil")</h3>
             <EditForm Model="studentState" OnValidSubmit="SaveStudentName" FormName="student-home-name-form">
                 <DataAnnotationsValidator />
                 <div class="form-grid">
-                    <label for="studentName">Student name</label>
+                    <label for="studentName">@Lang.T("Student name", "Nombre del estudiante")</label>
                     <InputText id="studentName" @bind-Value="studentState.Name" />
-                    <button class="btn" type="submit">Save profile</button>
+                    <button class="btn" type="submit">@Lang.T("Save profile", "Guardar perfil")</button>
                 </div>
             </EditForm>
         </article>

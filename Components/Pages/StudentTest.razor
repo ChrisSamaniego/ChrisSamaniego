@@ -1,17 +1,18 @@
 @page "/student/test"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Test</PageTitle>
+<PageTitle>@Lang.T("Test", "Examen")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>Tests</h2>
+        <h2>@Lang.T("Tests", "Exámenes")</h2>
         @foreach (var questionnaire in Data.Questionnaires)
         {
             var state = GetState(questionnaire);
@@ -21,7 +22,7 @@ else
 
                 @if (!questionnaire.Questions.Any())
                 {
-                    <p>No questions available in this test yet.</p>
+                    <p>@Lang.T("No questions available in this test yet.", "Aún no hay preguntas disponibles en este examen.")</p>
                 }
                 else
                 {
@@ -31,11 +32,11 @@ else
                         <InputTextArea @bind-Value="state.Answers[i]" rows="3" />
                     }
 
-                    <button class="btn" @onclick="() => SubmitAnswers(questionnaire)">Submit answers</button>
+                    <button class="btn" @onclick="() => SubmitAnswers(questionnaire)">@Lang.T("Submit answers", "Enviar respuestas")</button>
 
                     @if (state.ShowValidation)
                     {
-                        <p class="error-text">Please answer all questions before submitting.</p>
+                        <p class="error-text">@Lang.T("Please answer all questions before submitting.", "Responde todas las preguntas antes de enviar.")</p>
                     }
                 }
             </div>

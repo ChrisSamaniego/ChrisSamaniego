@@ -29,11 +29,11 @@
     <main>
         <header class="top-row">
             <div>
-                <strong>@Lang.T("Role:", "Rol:")</strong> @AppState.CurrentRole
+                <strong>@Lang.T("Role:", "Rol:")</strong> @GetRoleLabel()
             </div>
 
             <div class="header-actions">
-                <select class="language-toggle" value="@Lang.CurrentLanguage" @onchange="OnLanguageChanged" aria-label="Language">
+                <select class="language-toggle" value="@Lang.CurrentLanguage" @onchange="OnLanguageChanged" aria-label='@Lang.T("Language", "Idioma")'>
                     <option value="en">English</option>
                     <option value="es">Español</option>
                 </select>
@@ -90,6 +90,16 @@
         }
     }
 
+
+    private string GetRoleLabel()
+    {
+        return AppState.CurrentRole switch
+        {
+            UserRole.Teacher => Lang.T("Teacher", "Docente"),
+            UserRole.Administrator => Lang.T("Administrator", "Administrador"),
+            _ => Lang.T("Student", "Estudiante")
+        };
+    }
     private void OnLanguageChanged(ChangeEventArgs e)
     {
         Lang.SetLanguage(e.Value?.ToString());

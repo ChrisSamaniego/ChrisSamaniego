@@ -1,17 +1,18 @@
 @page "/student/classes"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>My classes</PageTitle>
+<PageTitle>@Lang.T("My classes", "Mis clases")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>My classes</h2>
+        <h2>@Lang.T("My classes", "Mis clases")</h2>
         @foreach (var schedule in Data.Schedules)
         {
             <div class="list-item list-item-row">
@@ -20,7 +21,7 @@ else
                     <div>@schedule.Start:g - @schedule.End:g</div>
                     <small>@schedule.Room · @schedule.Instructor</small>
                 </div>
-                <button class="btn" @onclick="() => Assign(schedule.Id)">Add</button>
+                <button class="btn" @onclick="() => Assign(schedule.Id)">@Lang.T("Add", "Agregar")</button>
             </div>
         }
     </div>

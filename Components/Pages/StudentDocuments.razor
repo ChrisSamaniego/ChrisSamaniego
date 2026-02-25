@@ -1,38 +1,39 @@
 @page "/student/documents"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Documents</PageTitle>
+<PageTitle>@Lang.T("Documents", "Documentos")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
     <div class="responsive-grid">
         <div class="panel">
-            <h2>Upload document</h2>
-            <p>Upload class documents and download them later.</p>
+            <h2>@Lang.T("Upload document", "Subir documento")</h2>
+            <p>@Lang.T("Upload class documents and download them later.", "Sube documentos de clase y descárgalos después.")</p>
             <InputFile OnChange="OnFileSelected" />
         </div>
 
         <div class="panel">
-            <h2>My documents</h2>
+            <h2>@Lang.T("My documents", "Mis documentos")</h2>
             @foreach (var doc in MyDocuments)
             {
                 <div class="list-item document-row">
                     <div>
                         <strong>@doc.FileName</strong>
-                        <div><small>Uploaded @doc.UploadedAt.ToLocalTime():g</small></div>
+                        <div><small>@Lang.T("Uploaded", "Subido") @doc.UploadedAt.ToLocalTime():g</small></div>
                     </div>
-                    <a class="btn" href="@GetDownloadLink(doc)" download="@doc.FileName">Download</a>
+                    <a class="btn" href="@GetDownloadLink(doc)" download="@doc.FileName">@Lang.T("Download", "Descargar")</a>
                 </div>
             }
 
             @if (!MyDocuments.Any())
             {
-                <p>No documents uploaded yet.</p>
+                <p>@Lang.T("No documents uploaded yet.", "No hay documentos subidos aún.")</p>
             }
         </div>
     </div>

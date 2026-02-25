@@ -1,12 +1,13 @@
 @page "/student/calendar"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>My calendar</PageTitle>
+<PageTitle>@Lang.T("My calendar", "Mi calendario")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Student)
 {
-    <div class="panel"><p>Switch to Student role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
 }
 else
 {
@@ -26,25 +27,25 @@ else
             }
             else
             {
-                <p>No classes assigned on this day.</p>
+                <p>@Lang.T("No classes assigned on this day.", "No hay clases asignadas este día.")</p>
             }
         </aside>
 
         <section>
             <div class="calendar-header microsoft-header">
                 <div>
-                    <h2>Calendar</h2>
+                    <h2>@Lang.T("Calendar", "Calendario")</h2>
                     <small>@monthToShow.ToString("MMMM yyyy")</small>
                 </div>
                 <div class="calendar-actions">
-                    <button type="button" class="btn" @onclick="PreviousMonth">Previous</button>
-                    <button type="button" class="btn" @onclick="Today">Today</button>
-                    <button type="button" class="btn" @onclick="NextMonth">Next</button>
+                    <button type="button" class="btn" @onclick="PreviousMonth">@Lang.T("Previous", "Anterior")</button>
+                    <button type="button" class="btn" @onclick="Today">@Lang.T("Today", "Hoy")</button>
+                    <button type="button" class="btn" @onclick="NextMonth">@Lang.T("Next", "Siguiente")</button>
                 </div>
             </div>
 
             <div class="calendar-grid calendar-weekdays microsoft-weekdays">
-                @foreach (var name in dayNames)
+                @foreach (var name in DayNames)
                 {
                     <div class="calendar-cell weekday">@name</div>
                 }
@@ -68,7 +69,9 @@ else
 }
 
 @code {
-    private readonly string[] dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    private string[] DayNames => string.Equals(Lang.CurrentLanguage, "es", StringComparison.Ordinal)
+        ? ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+        : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     private DateTime monthToShow = new(DateTime.Today.Year, DateTime.Today.Month, 1);
     private DateTime selectedDate = DateTime.Today;
     private List<ClassSchedule> selectedClasses = new();
