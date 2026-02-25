@@ -1,0 +1,108 @@
+@inherits LayoutComponentBase
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@if (AppState.IsAuthenticated)
+{
+<div class="page">
+    <aside class="sidebar">
+        <div class="profile-summary">
+            <div class="profile-avatar" title="@AppState.CurrentStudentName">
+                @if (!string.IsNullOrWhiteSpace(AppState.CurrentStudentPhotoDataUrl))
+                {
+                    <img src="@AppState.CurrentStudentPhotoDataUrl" alt="Student profile photo" />
+                }
+                else
+                {
+                    <span>@AppState.GetStudentInitials()</span>
+                }
+            </div>
+            <small>@AppState.CurrentStudentName</small>
+        </div>
+
+        <NavMenu />
+    </aside>
+
+    <main>
+        <header class="top-row">
+            <div>
+                <strong>@Lang.T("Role:", "Rol:")</strong> @AppState.CurrentRole
+            </div>
+
+            <div class="header-actions">
+                <select class="language-toggle" value="@Lang.CurrentLanguage" @onchange="OnLanguageChanged" aria-label="Language">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                </select>
+
+                <button type="button" class="icon-btn" title='@Lang.T("Alerts", "Alertas")' aria-label='@Lang.T("Alerts", "Alertas")'>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a5 5 0 0 0-5 5v3.5L5 15v1h14v-1l-2-2.5V9a5 5 0 0 0-5-5z"/><path d="M10 18a2 2 0 0 0 4 0"/></svg>
+                    @if (AlertCount > 0)
+                    {
+                        <span class="icon-badge">@AlertCount</span>
+                    }
+                </button>
+
+                <button type="button" class="icon-btn" title='@Lang.T("Pending contact", "Contacto pendiente")' aria-label='@Lang.T("Pending contact", "Contacto pendiente")'>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H7l-3 3z" /><path d="M8 9h8" /><path d="M8 12h6" /></svg>
+                    @if (PendingMessageCount > 0)
+                    {
+                        <span class="icon-badge">@PendingMessageCount</span>
+                    }
+                </button>
+
+                <button type="button" class="icon-btn" title='@Lang.T("Log out", "Cerrar sesión")' aria-label='@Lang.T("Log out", "Cerrar sesión")' @onclick="Logout">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5" /><path d="M14 8l5 4-5 4" /><path d="M8 12h11" /></svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="content">
+            @Body
+        </section>
+    </main>
+</div>
+}
+
+@code {
+    private int PendingMessageCount => Data.AdminMessages
+        .Count(m => string.Equals(m.StudentName, AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase)
+                    && string.IsNullOrWhiteSpace(m.AdminReply));
+
+    private int AlertCount => Data.AdminMessages
+        .Count(m => string.Equals(m.StudentName, AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrWhiteSpace(m.AdminReply));
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+        Lang.OnChange += StateHasChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!AppState.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/", replace: true);
+        }
+    }
+
+    private void OnLanguageChanged(ChangeEventArgs e)
+    {
+        Lang.SetLanguage(e.Value?.ToString());
+    }
+
+    private void Logout()
+    {
+        AppState.Logout();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+        Lang.OnChange -= StateHasChanged;
+    }
+}
