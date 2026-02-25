@@ -1,24 +1,25 @@
 @page "/teacher/attendance"
 @inject AppStateService AppState
+@inject LanguageService Lang
 
-<PageTitle>Take Attendance</PageTitle>
+<PageTitle>@Lang.T("Take Attendance", "Tomar asistencia")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Teacher)
 {
-    <div class="panel"><p>Switch to Teacher role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Teacher role.", "Cambia al rol de Docente.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>Take Attendance</h2>
-        <p>Use this page to mark attendance for today.</p>
+        <h2>@Lang.T("Take Attendance", "Tomar asistencia")</h2>
+        <p>@Lang.T("Use this page to mark attendance for today.", "Usa esta página para marcar la asistencia de hoy.")</p>
 
         <table class="fees-table">
             <thead>
             <tr>
-                <th>Student</th>
-                <th>Present</th>
-                <th>Comments</th>
+                <th>@Lang.T("Student", "Estudiante")</th>
+                <th>@Lang.T("Present", "Presente")</th>
+                <th>@Lang.T("Comments", "Comentarios")</th>
             </tr>
             </thead>
             <tbody>
@@ -30,7 +31,7 @@ else
                         <input type="checkbox" @bind="entry.IsPresent" aria-label="Mark @entry.Student present" />
                     </td>
                     <td>
-                        <InputText @bind-Value="entry.Comments" placeholder="Optional comments" />
+                        <InputText @bind-Value="entry.Comments" placeholder='@Lang.T("Optional comments", "Comentarios opcionales")' />
                     </td>
                 </tr>
             }

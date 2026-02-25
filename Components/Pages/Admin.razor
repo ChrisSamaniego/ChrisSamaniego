@@ -1,36 +1,37 @@
 @page "/admin"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Administrator</PageTitle>
+<PageTitle>@Lang.T("Administrator", "Administrador")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Administrator)
 {
     <div class="panel">
-        <h2>Administrator area</h2>
-        <p>Switch to <strong>Administrator</strong> role from Dashboard to manage schedules, tests, and student contact.</p>
+        <h2>@Lang.T("Administrator area", "Área de administración")</h2>
+        <p>@Lang.T("Switch to ", "Cambia al rol de ")<strong>@Lang.T("Administrator", "Administrador")</strong>@Lang.T(" role from Dashboard to manage schedules, tests, and student contact.", " desde el panel para administrar horarios, exámenes y contacto de estudiantes.")</p>
     </div>
 }
 else
 {
     <div class="kpi-grid">
         <div class="kpi-card">
-            <h4>Total classes</h4>
+            <h4>@Lang.T("Total classes", "Total de clases")</h4>
             <strong>@Data.Schedules.Count</strong>
         </div>
         <div class="kpi-card">
-            <h4>Tests published</h4>
+            <h4>@Lang.T("Tests published", "Exámenes publicados")</h4>
             <strong>@Data.Questionnaires.Count</strong>
         </div>
         <div class="kpi-card">
-            <h4>Pending contacts</h4>
+            <h4>@Lang.T("Pending contacts", "Contactos pendientes")</h4>
             <strong>@Data.AdminMessages.Count(m => string.IsNullOrWhiteSpace(m.AdminReply))</strong>
         </div>
     </div>
 
     <div class="responsive-grid">
         <div class="panel">
-            <h2>Create class schedule</h2>
+            <h2>@Lang.T("Create class schedule", "Crear horario de clase")</h2>
             <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule" FormName="admin-schedule-form">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -45,13 +46,13 @@ else
                     <InputDate @bind-Value="newSchedule.Start" />
                     <label>End</label>
                     <InputDate @bind-Value="newSchedule.End" />
-                    <button class="btn" type="submit">Create schedule</button>
+                    <button class="btn" type="submit">@Lang.T("Create schedule", "Crear horario")</button>
                 </div>
             </EditForm>
         </div>
 
         <div class="panel">
-            <h2>Create test</h2>
+            <h2>@Lang.T("Create test", "Crear examen")</h2>
             <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire" FormName="admin-questionnaire-form">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -60,14 +61,14 @@ else
                     <InputText @bind-Value="newQuestionnaire.Title" />
                     <label>Questions (one per line)</label>
                     <InputTextArea @bind-Value="questionInput" rows="5" />
-                    <button class="btn" type="submit">Create test</button>
+                    <button class="btn" type="submit">@Lang.T("Create test", "Crear examen")</button>
                 </div>
             </EditForm>
         </div>
     </div>
 
     <div class="panel">
-        <h3>Student contact</h3>
+        <h3>@Lang.T("Student contact", "Contacto de estudiantes")</h3>
         @foreach (var message in Data.AdminMessages.OrderByDescending(m => m.SentAt))
         {
             <div class="list-item">
@@ -78,14 +79,14 @@ else
                 @if (string.IsNullOrWhiteSpace(message.AdminReply))
                 {
                     <div class="form-grid">
-                        <textarea rows="3" placeholder="Write reply to student..." value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)"></textarea>
-                        <button class="btn" @onclick="() => Reply(message.Id)">Send reply</button>
+                        <textarea rows="3" placeholder='@Lang.T("Write reply to student...", "Escribe una respuesta al estudiante...")' value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)"></textarea>
+                        <button class="btn" @onclick="() => Reply(message.Id)">@Lang.T("Send reply", "Enviar respuesta")</button>
                     </div>
                 }
                 else
                 {
                     <div class="message-reply">
-                        <strong>Administrator reply</strong>
+                        <strong>@Lang.T("Administrator reply", "Respuesta del administrador")</strong>
                         <p>@message.AdminReply</p>
                         <small>@message.RepliedAt?.ToLocalTime():g</small>
                     </div>
@@ -95,7 +96,7 @@ else
     </div>
 
     <div class="panel">
-        <h3>Existing schedules</h3>
+        <h3>@Lang.T("Existing schedules", "Horarios existentes")</h3>
         @foreach (var schedule in Data.Schedules)
         {
             <div class="list-item">

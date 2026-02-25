@@ -7,6 +7,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<AppStateService>();
 builder.Services.AddScoped<SchoolDataService>();
+builder.Services.AddScoped<LanguageService>();
 
 var app = builder.Build();
 

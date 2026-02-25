@@ -132,6 +132,16 @@ body {
     gap: 0.5rem;
 }
 
+
+.language-toggle {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.4rem 0.55rem;
+    font: inherit;
+}
+
 .icon-btn {
     position: relative;
     width: 36px;

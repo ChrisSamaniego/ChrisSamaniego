@@ -1,36 +1,37 @@
 @page "/admin/courses"
 @inject AppStateService AppState
 @inject SchoolDataService Data
+@inject LanguageService Lang
 
-<PageTitle>Create Courses</PageTitle>
+<PageTitle>@Lang.T("Create Courses", "Crear cursos")</PageTitle>
 
 @if (AppState.CurrentRole != UserRole.Administrator)
 {
-    <div class="panel"><p>Switch to Administrator role.</p></div>
+    <div class="panel"><p>@Lang.T("Switch to Administrator role.", "Cambia al rol de Administrador.")</p></div>
 }
 else
 {
     <div class="panel">
-        <h2>Create Courses</h2>
+        <h2>@Lang.T("Create Courses", "Crear cursos")</h2>
         <EditForm Model="newCourse" OnValidSubmit="CreateCourse" FormName="admin-course-form">
             <DataAnnotationsValidator />
             <div class="form-grid">
-                <label>Code</label>
+                <label>@Lang.T("Code", "Código")</label>
                 <InputText @bind-Value="newCourse.Code" />
-                <label>Name</label>
+                <label>@Lang.T("Name", "Nombre")</label>
                 <InputText @bind-Value="newCourse.Name" />
-                <label>Credits</label>
+                <label>@Lang.T("Credits", "Créditos")</label>
                 <InputNumber @bind-Value="newCourse.Credits" />
-                <button class="btn" type="submit">Create course</button>
+                <button class="btn" type="submit">@Lang.T("Create course", "Crear curso")</button>
             </div>
         </EditForm>
     </div>
 
     <div class="panel">
-        <h3>Courses</h3>
+        <h3>@Lang.T("Courses", "Cursos")</h3>
         @foreach (var course in Data.Courses)
         {
-            <div class="list-item"><strong>@course.Code</strong> - @course.Name (@course.Credits credits)</div>
+            <div class="list-item"><strong>@course.Code</strong> - @course.Name (@course.Credits @Lang.T("credits", "créditos"))</div>
         }
     </div>
 }
