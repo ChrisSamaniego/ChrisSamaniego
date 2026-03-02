@@ -14,7 +14,7 @@
 body {
     margin: 0;
     font-family: "Segoe UI", "Inter", sans-serif;
-    background: var(--bg);
+    background: linear-gradient(160deg, #f2f3f6 0%, #e6e9ef 50%, #d8dde6 100%);
     color: var(--text);
 }
 
@@ -550,7 +550,7 @@ input:focus, textarea:focus, select:focus {
     display: grid;
     place-items: center;
     padding: 1.5rem;
-    background: var(--bg);
+    background: linear-gradient(160deg, #f2f3f6 0%, #e6e9ef 50%, #d8dde6 100%);
 }
 
 .login-card {
