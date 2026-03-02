@@ -1,0 +1,44 @@
+@page "/student/online-classes"
+@inject AppStateService AppState
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Online classes", "Clases en línea")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>@Lang.T("Online classes", "Clases en línea")</h2>
+        <p>@Lang.T("Watch class videos from your teachers.", "Mira videos de clase de tus docentes.")</p>
+
+        <div class="video-grid">
+            @foreach (var video in videos)
+            {
+                <article class="video-card">
+                    <h3>@video.Title</h3>
+                    <iframe src="@video.Url"
+                            title="@video.Title"
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                    </iframe>
+                </article>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<OnlineVideo> videos =
+    [
+        new("Algebra Basics", "https://www.youtube.com/embed/ERQx7eznH4s"),
+        new("World History Overview", "https://www.youtube.com/embed/xuCn8ux2gbs"),
+        new("Physics Intro", "https://www.youtube.com/embed/ZihywtixUYo")
+    ];
+
+    private record OnlineVideo(string Title, string Url);
+}
