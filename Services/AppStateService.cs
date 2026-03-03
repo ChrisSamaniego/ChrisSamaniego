@@ -89,6 +89,12 @@ public class AppStateService
             case "purple":
                 SetBackgroundGradient("#c7c3ff", "#f0efff");
                 break;
+            case "amber":
+                SetBackgroundGradient("#f6c25b", "#fff4de");
+                break;
+            case "red":
+                SetBackgroundGradient("#f29a9a", "#ffe8e8");
+                break;
             default:
                 SetBackgroundGradient("#9ec5ff", "#eaf3ff");
                 break;
