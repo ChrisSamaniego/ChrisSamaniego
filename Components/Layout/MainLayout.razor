@@ -7,7 +7,7 @@
 
 @if (AppState.IsAuthenticated)
 {
-<div class="page">
+<div class="page" style="@GetBackgroundStyle()">
     <aside class="sidebar">
         <div class="profile-summary">
             <div class="profile-avatar" title="@AppState.CurrentStudentName">
@@ -68,6 +68,12 @@
 }
 
 @code {
+
+    private string GetBackgroundStyle()
+    {
+        return $"background: linear-gradient(to bottom, {AppState.BackgroundGradientStart} 0%, {AppState.BackgroundGradientEnd} 100%);";
+    }
+
     private int PendingMessageCount => Data.AdminMessages
         .Count(m => string.Equals(m.StudentName, AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase)
                     && string.IsNullOrWhiteSpace(m.AdminReply));

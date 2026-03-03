@@ -29,6 +29,19 @@ else
         </div>
     </div>
 
+
+    <div class="panel">
+        <h3>@Lang.T("Site settings", "Configuración del sitio")</h3>
+        <div class="form-grid">
+            <label>@Lang.T("Background gradient", "Gradiente de fondo")</label>
+            <select value="@backgroundPreset" @onchange="OnBackgroundPresetChanged">
+                <option value="blue">@Lang.T("Light blue", "Azul claro")</option>
+                <option value="gray">@Lang.T("Gray", "Gris")</option>
+                <option value="purple">@Lang.T("Purple", "Morado")</option>
+            </select>
+        </div>
+    </div>
+
     <div class="responsive-grid">
         <div class="panel">
             <h2>@Lang.T("Create class schedule", "Crear horario de clase")</h2>
@@ -109,6 +122,15 @@ else
 }
 
 @code {
+
+    private string backgroundPreset = "blue";
+
+    private void OnBackgroundPresetChanged(ChangeEventArgs e)
+    {
+        backgroundPreset = e.Value?.ToString() ?? "blue";
+        AppState.SetBackgroundGradientPreset(backgroundPreset);
+    }
+
     private ClassSchedule newSchedule = new()
     {
         Start = DateTime.Today,
@@ -125,6 +147,13 @@ else
         {
             replyDrafts.TryAdd(message.Id, string.Empty);
         }
+
+        backgroundPreset = AppState.BackgroundGradientStart switch
+        {
+            "#b7bec8" => "gray",
+            "#c7c3ff" => "purple",
+            _ => "blue"
+        };
     }
 
     private void CreateSchedule()

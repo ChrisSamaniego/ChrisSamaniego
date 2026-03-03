@@ -8,6 +8,8 @@ public class AppStateService
     public string CurrentStudentName { get; private set; } = "Student One";
     public string? CurrentStudentPhotoDataUrl { get; private set; }
     public bool IsAuthenticated { get; private set; }
+    public string BackgroundGradientStart { get; private set; } = "#9ec5ff";
+    public string BackgroundGradientEnd { get; private set; } = "#eaf3ff";
 
     public event Action? OnChange;
 
@@ -65,6 +67,32 @@ public class AppStateService
     {
         CurrentStudentPhotoDataUrl = string.IsNullOrWhiteSpace(photoDataUrl) ? null : photoDataUrl;
         NotifyStateChanged();
+    }
+
+
+    public void SetBackgroundGradient(string startColor, string endColor)
+    {
+        BackgroundGradientStart = string.IsNullOrWhiteSpace(startColor) ? "#9ec5ff" : startColor.Trim();
+        BackgroundGradientEnd = string.IsNullOrWhiteSpace(endColor) ? "#eaf3ff" : endColor.Trim();
+        NotifyStateChanged();
+    }
+
+    public void SetBackgroundGradientPreset(string preset)
+    {
+        var key = preset?.Trim().ToLowerInvariant();
+
+        switch (key)
+        {
+            case "gray":
+                SetBackgroundGradient("#b7bec8", "#eceff4");
+                break;
+            case "purple":
+                SetBackgroundGradient("#c7c3ff", "#f0efff");
+                break;
+            default:
+                SetBackgroundGradient("#9ec5ff", "#eaf3ff");
+                break;
+        }
     }
 
     public void Logout()
