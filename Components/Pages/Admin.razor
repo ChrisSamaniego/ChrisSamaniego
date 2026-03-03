@@ -1,0 +1,212 @@
+@page "/admin"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Administrator", "Administrador")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Administrator)
+{
+    <div class="panel">
+        <h2>@Lang.T("Administrator area", "Área de administración")</h2>
+        <p>@Lang.T("Switch to ", "Cambia al rol de ")<strong>@Lang.T("Administrator", "Administrador")</strong>@Lang.T(" role from Dashboard to manage schedules, tests, and student contact.", " desde el panel para administrar horarios, exámenes y contacto de estudiantes.")</p>
+    </div>
+}
+else
+{
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h4>@Lang.T("Total classes", "Total de clases")</h4>
+            <strong>@Data.Schedules.Count</strong>
+        </div>
+        <div class="kpi-card">
+            <h4>@Lang.T("Tests published", "Exámenes publicados")</h4>
+            <strong>@Data.Questionnaires.Count</strong>
+        </div>
+        <div class="kpi-card">
+            <h4>@Lang.T("Pending contacts", "Contactos pendientes")</h4>
+            <strong>@Data.AdminMessages.Count(m => string.IsNullOrWhiteSpace(m.AdminReply))</strong>
+        </div>
+    </div>
+
+
+    <div class="panel">
+        <h3>@Lang.T("Site settings", "Configuración del sitio")</h3>
+        <div class="form-grid">
+            <label>@Lang.T("Background gradient", "Gradiente de fondo")</label>
+            <select value="@backgroundPreset" @onchange="OnBackgroundPresetChanged">
+                <option value="blue">@Lang.T("Light blue", "Azul claro")</option>
+                <option value="gray">@Lang.T("Gray", "Gris")</option>
+                <option value="purple">@Lang.T("Purple", "Morado")</option>
+                <option value="amber">@Lang.T("Amber", "Ámbar")</option>
+                <option value="red">@Lang.T("Red", "Rojo")</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>@Lang.T("Create class schedule", "Crear horario de clase")</h2>
+            <EditForm Model="newSchedule" OnValidSubmit="CreateSchedule" FormName="admin-schedule-form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>@Lang.T("Name", "Nombre")</label>
+                    <InputText @bind-Value="newSchedule.Name" />
+                    <label>@Lang.T("Instructor", "Instructor")</label>
+                    <InputText @bind-Value="newSchedule.Instructor" />
+                    <label>@Lang.T("Room", "Aula")</label>
+                    <InputText @bind-Value="newSchedule.Room" />
+                    <label>@Lang.T("Start", "Inicio")</label>
+                    <InputDate @bind-Value="newSchedule.Start" />
+                    <label>@Lang.T("End", "Fin")</label>
+                    <InputDate @bind-Value="newSchedule.End" />
+                    <button class="btn" type="submit">@Lang.T("Create schedule", "Crear horario")</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="panel">
+            <h2>@Lang.T("Create test", "Crear examen")</h2>
+            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire" FormName="admin-questionnaire-form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>@Lang.T("Title", "Título")</label>
+                    <InputText @bind-Value="newQuestionnaire.Title" />
+                    <label>@Lang.T("Questions (one per line)", "Preguntas (una por línea)")</label>
+                    <InputTextArea @bind-Value="questionInput" rows="5" />
+                    <button class="btn" type="submit">@Lang.T("Create test", "Crear examen")</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>@Lang.T("Student contact", "Contacto de estudiantes")</h3>
+        @foreach (var message in Data.AdminMessages.OrderByDescending(m => m.SentAt))
+        {
+            <div class="list-item">
+                <strong>@message.Subject</strong>
+                <div><small>@Lang.T("From", "De") @message.StudentName · @message.SentAt.ToLocalTime():g</small></div>
+                <p>@message.Content</p>
+
+                @if (string.IsNullOrWhiteSpace(message.AdminReply))
+                {
+                    <div class="form-grid">
+                        <textarea rows="3" placeholder='@Lang.T("Write reply to student...", "Escribe una respuesta al estudiante...")' value="@GetReplyDraft(message.Id)" @oninput="(e) => SetReplyDraft(message.Id, e.Value?.ToString() ?? string.Empty)"></textarea>
+                        <button class="btn" @onclick="() => Reply(message.Id)">@Lang.T("Send reply", "Enviar respuesta")</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="message-reply">
+                        <strong>@Lang.T("Administrator reply", "Respuesta del administrador")</strong>
+                        <p>@message.AdminReply</p>
+                        <small>@message.RepliedAt?.ToLocalTime():g</small>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <h3>@Lang.T("Existing schedules", "Horarios existentes")</h3>
+        @foreach (var schedule in Data.Schedules)
+        {
+            <div class="list-item">
+                <strong>@schedule.Name</strong> - @schedule.Instructor (@schedule.Room)
+                <div>@schedule.Start:g - @schedule.End:g</div>
+                <small>@Lang.T("Assigned:", "Asignado:") @string.Join(", ", schedule.AssignedStudents.DefaultIfEmpty(Lang.T("none", "ninguno")))</small>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    private string backgroundPreset = "blue";
+
+    private void OnBackgroundPresetChanged(ChangeEventArgs e)
+    {
+        backgroundPreset = e.Value?.ToString() ?? "blue";
+        AppState.SetBackgroundGradientPreset(backgroundPreset);
+    }
+
+    private ClassSchedule newSchedule = new()
+    {
+        Start = DateTime.Today,
+        End = DateTime.Today.AddDays(1)
+    };
+
+    private Questionnaire newQuestionnaire = new();
+    private string questionInput = string.Empty;
+    private readonly Dictionary<Guid, string> replyDrafts = new();
+
+    protected override void OnInitialized()
+    {
+        foreach (var message in Data.AdminMessages)
+        {
+            replyDrafts.TryAdd(message.Id, string.Empty);
+        }
+
+        backgroundPreset = AppState.BackgroundGradientStart switch
+        {
+            "#b7bec8" => "gray",
+            "#c7c3ff" => "purple",
+            "#f6c25b" => "amber",
+            "#f29a9a" => "red",
+            _ => "blue"
+        };
+    }
+
+    private void CreateSchedule()
+    {
+        Data.CreateSchedule(newSchedule);
+        newSchedule = new ClassSchedule
+        {
+            Start = DateTime.Today,
+            End = DateTime.Today.AddDays(1)
+        };
+    }
+
+    private void CreateQuestionnaire()
+    {
+        newQuestionnaire.Questions = questionInput
+            .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
+        Data.CreateQuestionnaire(newQuestionnaire);
+
+        newQuestionnaire = new Questionnaire();
+        questionInput = string.Empty;
+    }
+
+
+    private string GetReplyDraft(Guid messageId)
+    {
+        if (!replyDrafts.TryGetValue(messageId, out var value))
+        {
+            value = string.Empty;
+            replyDrafts[messageId] = value;
+        }
+
+        return value;
+    }
+
+    private void SetReplyDraft(Guid messageId, string value)
+    {
+        replyDrafts[messageId] = value;
+    }
+
+    private void Reply(Guid messageId)
+    {
+        if (!replyDrafts.TryGetValue(messageId, out var draft))
+        {
+            return;
+        }
+
+        Data.ReplyToMessage(messageId, draft);
+        replyDrafts[messageId] = string.Empty;
+    }
+}

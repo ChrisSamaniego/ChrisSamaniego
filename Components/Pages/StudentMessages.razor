@@ -1,0 +1,78 @@
+@page "/student/contact"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Contact", "Contacto")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
+}
+else
+{
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>@Lang.T("Contact administrator", "Contactar administrador")</h2>
+            <EditForm Model="newMessage" OnValidSubmit="SendMessage" FormName="student-message-form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>@Lang.T("Subject", "Asunto")</label>
+                    <InputText @bind-Value="newMessage.Subject" placeholder='@Lang.T("Example: Need help with class schedule", "Ejemplo: Necesito ayuda con el horario")' />
+                    <label>@Lang.T("Message", "Mensaje")</label>
+                    <InputTextArea @bind-Value="newMessage.Content" rows="5" placeholder='@Lang.T("Write your message for the administrator", "Escribe tu mensaje para el administrador")' />
+                    <button class="btn" type="submit">@Lang.T("Send message", "Enviar mensaje")</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="panel">
+            <h2>@Lang.T("Contact history", "Historial de contacto")</h2>
+            @foreach (var message in MyMessages)
+            {
+                <div class="list-item">
+                    <strong>@message.Subject</strong>
+                    <div><small>@Lang.T("Sent", "Enviado") @message.SentAt.ToLocalTime():g</small></div>
+                    <p>@message.Content</p>
+
+                    @if (string.IsNullOrWhiteSpace(message.AdminReply))
+                    {
+                        <span class="status-tag pending">@Lang.T("Pending administrator reply", "Respuesta del administrador pendiente")</span>
+                    }
+                    else
+                    {
+                        <div class="message-reply">
+                            <strong>@Lang.T("Administrator", "Administrador")</strong>
+                            <p>@message.AdminReply</p>
+                            <small>@Lang.T("Replied", "Respondido") @message.RepliedAt?.ToLocalTime():g</small>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private MessageForm newMessage = new();
+
+    private IEnumerable<AdminMessage> MyMessages => Data.AdminMessages
+        .Where(m => string.Equals(m.StudentName, AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase))
+        .OrderByDescending(m => m.SentAt);
+
+    private void SendMessage()
+    {
+        Data.SendMessageToAdmin(AppState.CurrentStudentName, newMessage.Subject, newMessage.Content);
+        newMessage = new MessageForm();
+    }
+
+    private class MessageForm
+    {
+        [Required]
+        public string Subject { get; set; } = string.Empty;
+
+        [Required]
+        public string Content { get; set; } = string.Empty;
+    }
+}
