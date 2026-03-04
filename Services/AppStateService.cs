@@ -10,6 +10,11 @@ public class AppStateService
     public bool IsAuthenticated { get; private set; }
     public string BackgroundGradientStart { get; private set; } = "#9ec5ff";
     public string BackgroundGradientEnd { get; private set; } = "#eaf3ff";
+    public string SidebarColor { get; private set; } = "#edf4ff";
+    public string NavTextColor { get; private set; } = "#3f4f69";
+    public string NavHoverColor { get; private set; } = "#dfeaff";
+    public string NavActiveColor { get; private set; } = "#d3e2ff";
+    public string NavIconColor { get; private set; } = "#6e88ad";
 
     public event Action? OnChange;
 
@@ -74,29 +79,81 @@ public class AppStateService
     {
         BackgroundGradientStart = string.IsNullOrWhiteSpace(startColor) ? "#9ec5ff" : startColor.Trim();
         BackgroundGradientEnd = string.IsNullOrWhiteSpace(endColor) ? "#eaf3ff" : endColor.Trim();
+        ApplyNavigationHarmony("blue");
         NotifyStateChanged();
     }
 
     public void SetBackgroundGradientPreset(string preset)
     {
-        var key = preset?.Trim().ToLowerInvariant();
+        var key = preset?.Trim().ToLowerInvariant() ?? "blue";
 
         switch (key)
         {
             case "gray":
-                SetBackgroundGradient("#b7bec8", "#eceff4");
+                BackgroundGradientStart = "#b7bec8";
+                BackgroundGradientEnd = "#eceff4";
                 break;
             case "purple":
-                SetBackgroundGradient("#c7c3ff", "#f0efff");
+                BackgroundGradientStart = "#c7c3ff";
+                BackgroundGradientEnd = "#f0efff";
                 break;
             case "amber":
-                SetBackgroundGradient("#f6c25b", "#fff4de");
+                BackgroundGradientStart = "#f6c25b";
+                BackgroundGradientEnd = "#fff4de";
                 break;
             case "red":
-                SetBackgroundGradient("#f29a9a", "#ffe8e8");
+                BackgroundGradientStart = "#f29a9a";
+                BackgroundGradientEnd = "#ffe8e8";
                 break;
             default:
-                SetBackgroundGradient("#9ec5ff", "#eaf3ff");
+                key = "blue";
+                BackgroundGradientStart = "#9ec5ff";
+                BackgroundGradientEnd = "#eaf3ff";
+                break;
+        }
+
+        ApplyNavigationHarmony(key);
+        NotifyStateChanged();
+    }
+
+    private void ApplyNavigationHarmony(string preset)
+    {
+        switch (preset)
+        {
+            case "gray":
+                SidebarColor = "#edf0f4";
+                NavTextColor = "#4f5867";
+                NavHoverColor = "#dfe4eb";
+                NavActiveColor = "#d3d9e2";
+                NavIconColor = "#7f899a";
+                break;
+            case "purple":
+                SidebarColor = "#f2efff";
+                NavTextColor = "#4f4472";
+                NavHoverColor = "#e6e0ff";
+                NavActiveColor = "#dcd3ff";
+                NavIconColor = "#7e72a8";
+                break;
+            case "amber":
+                SidebarColor = "#fff6e6";
+                NavTextColor = "#6e5530";
+                NavHoverColor = "#ffeec9";
+                NavActiveColor = "#ffe4af";
+                NavIconColor = "#a88445";
+                break;
+            case "red":
+                SidebarColor = "#fff0f0";
+                NavTextColor = "#744747";
+                NavHoverColor = "#ffdede";
+                NavActiveColor = "#ffcfcf";
+                NavIconColor = "#a86b6b";
+                break;
+            default:
+                SidebarColor = "#edf4ff";
+                NavTextColor = "#3f4f69";
+                NavHoverColor = "#dfeaff";
+                NavActiveColor = "#d3e2ff";
+                NavIconColor = "#6e88ad";
                 break;
         }
     }

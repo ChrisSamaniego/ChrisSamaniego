@@ -36,7 +36,7 @@ body {
 
 .sidebar {
     padding: 0.9rem 0.7rem;
-    background: #ffffff;
+    background: var(--sidebar-bg, #ffffff);
 }
 
 .profile-summary {
@@ -82,7 +82,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    color: #666d7b;
+    color: var(--nav-text, #666d7b);
     text-decoration: none;
     padding: 0.58rem 0.6rem;
     border: 1px solid transparent;
@@ -92,13 +92,13 @@ body {
 }
 
 .nav-menu a:hover {
-    background: #ffffff;
-    color: var(--accent);
+    background: var(--nav-hover, #ffffff);
+    color: var(--nav-text, var(--accent));
     border-color: #e5e8f0;
 }
 
 .nav-menu a.active {
-    background: var(--bg);
+    background: var(--nav-active, var(--bg));
     color: var(--text);
     border-color: var(--border);
     margin-right: -0.7rem;
@@ -110,7 +110,7 @@ body {
     width: 18px;
     height: 18px;
     fill: none;
-    stroke: #8c97a8;
+    stroke: var(--nav-icon, #8c97a8);
     stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;

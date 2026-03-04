@@ -71,7 +71,8 @@
 
     private string GetBackgroundStyle()
     {
-        return $"background: linear-gradient(to bottom, {AppState.BackgroundGradientStart} 0%, {AppState.BackgroundGradientEnd} 100%);";
+        return $"background: linear-gradient(to bottom, {AppState.BackgroundGradientStart} 0%, {AppState.BackgroundGradientEnd} 100%);" +
+               $" --sidebar-bg:{AppState.SidebarColor}; --nav-text:{AppState.NavTextColor}; --nav-hover:{AppState.NavHoverColor}; --nav-active:{AppState.NavActiveColor}; --nav-icon:{AppState.NavIconColor};";
     }
 
     private int PendingMessageCount => Data.AdminMessages
