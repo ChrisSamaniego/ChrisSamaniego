@@ -1,0 +1,65 @@
+@page "/student/documents"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Documents", "Documentos")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
+}
+else
+{
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>@Lang.T("Upload document", "Subir documento")</h2>
+            <p>@Lang.T("Upload class documents and download them later.", "Sube documentos de clase y descárgalos después.")</p>
+            <InputFile OnChange="OnFileSelected" />
+        </div>
+
+        <div class="panel">
+            <h2>@Lang.T("My documents", "Mis documentos")</h2>
+            @foreach (var doc in MyDocuments)
+            {
+                <div class="list-item document-row">
+                    <div>
+                        <strong>@doc.FileName</strong>
+                        <div><small>@Lang.T("Uploaded", "Subido") @doc.UploadedAt.ToLocalTime():g</small></div>
+                    </div>
+                    <a class="btn" href="@GetDownloadLink(doc)" download="@doc.FileName">@Lang.T("Download", "Descargar")</a>
+                </div>
+            }
+
+            @if (!MyDocuments.Any())
+            {
+                <p>@Lang.T("No documents uploaded yet.", "No hay documentos subidos aún.")</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<PortalDocument> MyDocuments => Data.Documents
+        .Where(d => string.Equals(d.UploadedBy, AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase))
+        .OrderByDescending(d => d.UploadedAt);
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null)
+        {
+            return;
+        }
+
+        await using var stream = file.OpenReadStream(4 * 1024 * 1024);
+        using var memory = new MemoryStream();
+        await stream.CopyToAsync(memory);
+        var base64 = Convert.ToBase64String(memory.ToArray());
+
+        Data.UploadDocument(file.Name, file.ContentType, base64, AppState.CurrentStudentName);
+    }
+
+    private static string GetDownloadLink(PortalDocument document) =>
+        $"data:{document.ContentType};base64,{document.Base64Content}";
+}
