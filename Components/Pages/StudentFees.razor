@@ -1,0 +1,40 @@
+@page "/student/fees"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Course Fees", "Pagos de cursos")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel"><p>@Lang.T("Switch to Student role.", "Cambia al rol de Estudiante.")</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>@Lang.T("Course fees", "Pagos de cursos")</h2>
+        <p>@Lang.T("Overview of school course fees.", "Resumen de pagos de cursos escolares.")</p>
+
+        <div class="fees-table-wrap">
+            <table class="fees-table">
+                <thead>
+                    <tr>
+                        <th>@Lang.T("Course", "Curso")</th>
+                        <th>@Lang.T("Fee", "Pago")</th>
+                        <th>@Lang.T("Period", "Periodo")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fee in Data.CourseFees)
+                    {
+                        <tr>
+                            <td>@fee.CourseName</td>
+                            <td>@fee.Currency @fee.Amount.ToString("0.00")</td>
+                            <td>@fee.BillingPeriod</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
