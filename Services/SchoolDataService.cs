@@ -77,6 +77,28 @@ public class SchoolDataService
         new() { Code = "PHYS110", Name = "Physics Lab", Credits = 3 }
     ];
 
+
+
+    public List<StaffMessage> StaffMessages { get; } =
+    [
+        new()
+        {
+            FromRole = UserRole.Teacher,
+            ToRole = UserRole.Administrator,
+            Subject = "Attendance summary",
+            Content = "Please review attendance report for Grade 9.",
+            SentAt = DateTime.UtcNow.AddHours(-4)
+        },
+        new()
+        {
+            FromRole = UserRole.Administrator,
+            ToRole = UserRole.Teacher,
+            Subject = "Re: Attendance summary",
+            Content = "Reviewed. Thanks for sharing the report.",
+            SentAt = DateTime.UtcNow.AddHours(-2)
+        }
+    ];
+
     public List<AdminMessage> AdminMessages { get; } =
     [
         new()
@@ -149,6 +171,25 @@ public class SchoolDataService
     public void AddCourseFee(CourseFee courseFee)
     {
         CourseFees.Insert(0, courseFee);
+    }
+
+
+
+    public void SendStaffMessage(UserRole fromRole, UserRole toRole, string subject, string content)
+    {
+        if (string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(content))
+        {
+            return;
+        }
+
+        StaffMessages.Insert(0, new StaffMessage
+        {
+            FromRole = fromRole,
+            ToRole = toRole,
+            Subject = subject.Trim(),
+            Content = content.Trim(),
+            SentAt = DateTime.UtcNow
+        });
     }
 
     public void SendMessageToAdmin(string studentName, string subject, string content)
