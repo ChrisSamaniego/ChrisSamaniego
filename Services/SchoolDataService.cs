@@ -4,6 +4,34 @@ namespace SchoolPortal.Services;
 
 public class SchoolDataService
 {
+    private static readonly Dictionary<TheoreticalExamType, List<string>> ExamQuestionTemplates = new()
+    {
+        [TheoreticalExamType.Fundamentals] =
+        [
+            "Define the key concepts for this course.",
+            "List two foundational principles and explain each briefly.",
+            "Why are fundamentals important before moving to advanced topics?"
+        ],
+        [TheoreticalExamType.AppliedCaseStudy] =
+        [
+            "Analyze this course topic using one real-world example.",
+            "What decision would you make in the scenario and why?",
+            "What risks or constraints should be considered?"
+        ],
+        [TheoreticalExamType.ProblemSolving] =
+        [
+            "Describe your step-by-step approach to solve a typical problem in this course.",
+            "What assumptions are valid for your solution?",
+            "How would you validate your result?"
+        ],
+        [TheoreticalExamType.FinalReview] =
+        [
+            "Summarize the most important learning outcomes of this course.",
+            "Connect at least two topics covered in class.",
+            "What topic needs more practice for you and why?"
+        ]
+    };
+
     public List<ClassSchedule> Schedules { get; } =
     [
         new()
@@ -34,20 +62,7 @@ public class SchoolDataService
         }
     ];
 
-    public List<Questionnaire> Questionnaires { get; } =
-    [
-        new()
-        {
-            Title = "Science Test",
-            Questions =
-            [
-                "What is Newton's second law?",
-                "Name one renewable energy source.",
-                "Explain the difference between mass and weight."
-            ]
-        }
-    ];
-
+    public List<Questionnaire> Questionnaires { get; } = [];
 
     public List<PortalDocument> Documents { get; } =
     [
@@ -61,7 +76,6 @@ public class SchoolDataService
         }
     ];
 
-
     public List<CourseFee> CourseFees { get; } =
     [
         new() { CourseName = "Mathematics 101", Amount = 240m, Currency = "USD", BillingPeriod = "Monthly" },
@@ -69,15 +83,12 @@ public class SchoolDataService
         new() { CourseName = "Physics Lab", Amount = 210m, Currency = "USD", BillingPeriod = "Monthly" }
     ];
 
-
     public List<CourseCatalogItem> Courses { get; } =
     [
         new() { Code = "MATH101", Name = "Mathematics 101", Credits = 3 },
         new() { Code = "HIST201", Name = "World History", Credits = 2 },
         new() { Code = "PHYS110", Name = "Physics Lab", Credits = 3 }
     ];
-
-
 
     public List<StaffMessage> StaffMessages { get; } =
     [
@@ -118,6 +129,14 @@ public class SchoolDataService
             SentAt = DateTime.UtcNow.AddHours(-2)
         }
     ];
+
+    public SchoolDataService()
+    {
+        foreach (var course in Courses)
+        {
+            EnsureTheoreticalExamsForCourse(course);
+        }
+    }
 
     public void CreateSchedule(ClassSchedule schedule)
     {
@@ -161,19 +180,38 @@ public class SchoolDataService
         questionnaire.Responses.Add(response);
     }
 
+    public void GradeQuestionnaireResponse(Guid questionnaireId, Guid responseId, int grade, string teacherComments)
+    {
+        if (grade is < 1 or > 10)
+        {
+            return;
+        }
+
+        var questionnaire = Questionnaires.FirstOrDefault(q => q.Id == questionnaireId);
+        var response = questionnaire?.Responses.FirstOrDefault(r => r.Id == responseId);
+        if (response is null)
+        {
+            return;
+        }
+
+        response.Grade = grade;
+        response.TeacherComments = teacherComments.Trim();
+        response.GradedAt = DateTime.UtcNow;
+    }
 
     public void CreateCourse(CourseCatalogItem course)
     {
         course.Id = Guid.NewGuid();
+        course.HasPracticalExamStage = true;
+        course.HasTheoreticalExamStage = true;
         Courses.Insert(0, course);
+        EnsureTheoreticalExamsForCourse(course);
     }
 
     public void AddCourseFee(CourseFee courseFee)
     {
         CourseFees.Insert(0, courseFee);
     }
-
-
 
     public void SendStaffMessage(UserRole fromRole, UserRole toRole, string subject, string content)
     {
@@ -215,7 +253,6 @@ public class SchoolDataService
         message.RepliedAt = DateTime.UtcNow;
     }
 
-
     public void UploadDocument(string fileName, string contentType, string base64Content, string uploadedBy)
     {
         Documents.Insert(0, new PortalDocument
@@ -228,4 +265,23 @@ public class SchoolDataService
         });
     }
 
+    private void EnsureTheoreticalExamsForCourse(CourseCatalogItem course)
+    {
+        foreach (var examType in Enum.GetValues<TheoreticalExamType>())
+        {
+            if (Questionnaires.Any(q => q.CourseCode.Equals(course.Code, StringComparison.OrdinalIgnoreCase) && q.ExamType == examType))
+            {
+                continue;
+            }
+
+            Questionnaires.Add(new Questionnaire
+            {
+                Title = $"{course.Name} - {examType}",
+                CourseCode = course.Code,
+                CourseName = course.Name,
+                ExamType = examType,
+                Questions = ExamQuestionTemplates[examType].ToList()
+            });
+        }
+    }
 }

@@ -20,7 +20,7 @@ else
             <strong>@Data.Schedules.Count</strong>
         </div>
         <div class="kpi-card">
-            <h4>@Lang.T("Tests published", "Exámenes publicados")</h4>
+            <h4>@Lang.T("Theoretical exams", "Exámenes teóricos")</h4>
             <strong>@Data.Questionnaires.Count</strong>
         </div>
         <div class="kpi-card">
@@ -67,18 +67,9 @@ else
         </div>
 
         <div class="panel">
-            <h2>@Lang.T("Create test", "Crear examen")</h2>
-            <EditForm Model="newQuestionnaire" OnValidSubmit="CreateQuestionnaire" FormName="admin-questionnaire-form">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="form-grid">
-                    <label>@Lang.T("Title", "Título")</label>
-                    <InputText @bind-Value="newQuestionnaire.Title" />
-                    <label>@Lang.T("Questions (one per line)", "Preguntas (una por línea)")</label>
-                    <InputTextArea @bind-Value="questionInput" rows="5" />
-                    <button class="btn" type="submit">@Lang.T("Create test", "Crear examen")</button>
-                </div>
-            </EditForm>
+            <h2>@Lang.T("Course exam stages", "Etapas de examen por curso")</h2>
+            <p>@Lang.T("Each course includes two stages: Practical Exam and Theoretical Exam.", "Cada curso incluye dos etapas: examen práctico y examen teórico.")</p>
+            <p>@Lang.T("Theoretical exams are auto-created with 4 types per course.", "Los exámenes teóricos se crean automáticamente con 4 tipos por curso.")</p>
         </div>
     </div>
 
@@ -139,8 +130,6 @@ else
         End = DateTime.Today.AddDays(1)
     };
 
-    private Questionnaire newQuestionnaire = new();
-    private string questionInput = string.Empty;
     private readonly Dictionary<Guid, string> replyDrafts = new();
 
     protected override void OnInitialized()
@@ -169,19 +158,6 @@ else
             End = DateTime.Today.AddDays(1)
         };
     }
-
-    private void CreateQuestionnaire()
-    {
-        newQuestionnaire.Questions = questionInput
-            .Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-            .ToList();
-
-        Data.CreateQuestionnaire(newQuestionnaire);
-
-        newQuestionnaire = new Questionnaire();
-        questionInput = string.Empty;
-    }
-
 
     private string GetReplyDraft(Guid messageId)
     {

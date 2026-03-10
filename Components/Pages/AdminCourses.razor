@@ -31,7 +31,12 @@ else
         <h3>@Lang.T("Courses", "Cursos")</h3>
         @foreach (var course in Data.Courses)
         {
-            <div class="list-item"><strong>@course.Code</strong> - @course.Name (@course.Credits @Lang.T("credits", "créditos"))</div>
+            var courseExamCount = Data.Questionnaires.Count(q => q.CourseCode == course.Code);
+            <div class="list-item">
+                <strong>@course.Code</strong> - @course.Name (@course.Credits @Lang.T("credits", "créditos"))
+                <div>@Lang.T("Stages", "Etapas"): @Lang.T("Practical", "Práctico") + @Lang.T("Theoretical", "Teórico")</div>
+                <small>@Lang.T("Theoretical exam types", "Tipos de examen teórico"): @courseExamCount/4</small>
+            </div>
         }
     </div>
 }

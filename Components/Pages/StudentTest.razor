@@ -13,12 +13,15 @@ else
 {
     <div class="panel">
         <h2>@Lang.T("Tests", "Exámenes")</h2>
-        @foreach (var questionnaire in Data.Questionnaires)
+        @foreach (var questionnaire in Data.Questionnaires.OrderBy(q => q.CourseName).ThenBy(q => q.ExamType))
         {
             var state = GetState(questionnaire);
+            var studentResponse = questionnaire.Responses
+                .LastOrDefault(r => r.StudentName.Equals(AppState.CurrentStudentName, StringComparison.OrdinalIgnoreCase));
 
             <div class="list-item">
-                <strong>@questionnaire.Title</strong>
+                <strong>@questionnaire.CourseName</strong>
+                <div><small>@Lang.T("Stage", "Etapa"): @Lang.T("Theoretical Exam", "Examen teórico") · @Lang.T("Type", "Tipo"): @questionnaire.ExamType</small></div>
 
                 @if (!questionnaire.Questions.Any())
                 {
@@ -38,6 +41,23 @@ else
                     {
                         <p class="error-text">@Lang.T("Please answer all questions before submitting.", "Responde todas las preguntas antes de enviar.")</p>
                     }
+                }
+
+                @if (studentResponse is not null)
+                {
+                    <div class="message-reply">
+                        <strong>@Lang.T("Latest submission", "Último envío")</strong>
+                        <p>@studentResponse.SubmittedAt.ToLocalTime():g</p>
+                        @if (studentResponse.Grade.HasValue)
+                        {
+                            <p><strong>@Lang.T("Grade", "Calificación"):</strong> @studentResponse.Grade/10</p>
+                            <p><strong>@Lang.T("Teacher comments", "Comentarios del docente"):</strong> @studentResponse.TeacherComments</p>
+                        }
+                        else
+                        {
+                            <p>@Lang.T("Pending teacher review.", "Pendiente de revisión docente.")</p>
+                        }
+                    </div>
                 }
             </div>
         }
