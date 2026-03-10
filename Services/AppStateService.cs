@@ -10,11 +10,11 @@ public class AppStateService
     public bool IsAuthenticated { get; private set; }
     public string BackgroundGradientStart { get; private set; } = "#9ec5ff";
     public string BackgroundGradientEnd { get; private set; } = "#eaf3ff";
-    public string SidebarColor { get; private set; } = "#edf4ff";
-    public string NavTextColor { get; private set; } = "#3f4f69";
-    public string NavHoverColor { get; private set; } = "#dfeaff";
-    public string NavActiveColor { get; private set; } = "#d3e2ff";
-    public string NavIconColor { get; private set; } = "#6e88ad";
+    public string SidebarColor { get; private set; } = "#0d1b4d";
+    public string NavTextColor { get; private set; } = "#eaf2ff";
+    public string NavHoverColor { get; private set; } = "rgba(173, 216, 255, 0.2)";
+    public string NavActiveColor { get; private set; } = "#d8ebff";
+    public string NavIconColor { get; private set; } = "#c5dcff";
 
     public event Action? OnChange;
 
@@ -118,44 +118,11 @@ public class AppStateService
 
     private void ApplyNavigationHarmony(string preset)
     {
-        switch (preset)
-        {
-            case "gray":
-                SidebarColor = "#edf0f4";
-                NavTextColor = "#4f5867";
-                NavHoverColor = "#dfe4eb";
-                NavActiveColor = "#d3d9e2";
-                NavIconColor = "#7f899a";
-                break;
-            case "purple":
-                SidebarColor = "#f2efff";
-                NavTextColor = "#4f4472";
-                NavHoverColor = "#e6e0ff";
-                NavActiveColor = "#dcd3ff";
-                NavIconColor = "#7e72a8";
-                break;
-            case "amber":
-                SidebarColor = "#fff6e6";
-                NavTextColor = "#6e5530";
-                NavHoverColor = "#ffeec9";
-                NavActiveColor = "#ffe4af";
-                NavIconColor = "#a88445";
-                break;
-            case "red":
-                SidebarColor = "#fff0f0";
-                NavTextColor = "#744747";
-                NavHoverColor = "#ffdede";
-                NavActiveColor = "#ffcfcf";
-                NavIconColor = "#a86b6b";
-                break;
-            default:
-                SidebarColor = "#edf4ff";
-                NavTextColor = "#3f4f69";
-                NavHoverColor = "#dfeaff";
-                NavActiveColor = "#d3e2ff";
-                NavIconColor = "#6e88ad";
-                break;
-        }
+        SidebarColor = "#0d1b4d";
+        NavTextColor = "#eaf2ff";
+        NavHoverColor = "rgba(173, 216, 255, 0.2)";
+        NavActiveColor = "#d8ebff";
+        NavIconColor = "#c5dcff";
     }
 
     public void Logout()
