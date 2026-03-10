@@ -1,0 +1,61 @@
+@page "/admin/fees"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Admin Fees", "Administrar pagos")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Administrator)
+{
+    <div class="panel"><p>@Lang.T("Switch to Administrator role.", "Cambia al rol de Administrador.")</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>@Lang.T("Admin Fees", "Administrar pagos")</h2>
+        <EditForm Model="newFee" OnValidSubmit="CreateFee" FormName="admin-fee-form">
+            <DataAnnotationsValidator />
+            <div class="form-grid">
+                <label>@Lang.T("Course name", "Nombre del curso")</label>
+                <InputText @bind-Value="newFee.CourseName" />
+                <label>@Lang.T("Amount", "Monto")</label>
+                <InputNumber @bind-Value="newFee.Amount" />
+                <label>@Lang.T("Currency", "Moneda")</label>
+                <InputText @bind-Value="newFee.Currency" />
+                <label>@Lang.T("Billing period", "Periodo de cobro")</label>
+                <InputText @bind-Value="newFee.BillingPeriod" />
+                <button class="btn" type="submit">@Lang.T("Add fee", "Agregar pago")</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="panel">
+        <h3>@Lang.T("Fees", "Pagos")</h3>
+        @foreach (var fee in Data.CourseFees)
+        {
+            <div class="list-item">@fee.CourseName - @fee.Currency @fee.Amount.ToString("0.00") (@fee.BillingPeriod)</div>
+        }
+    </div>
+}
+
+@code {
+    private CourseFee newFee = new() { Currency = "USD", BillingPeriod = "Monthly" };
+
+    private void CreateFee()
+    {
+        if (string.IsNullOrWhiteSpace(newFee.CourseName) || newFee.Amount <= 0)
+        {
+            return;
+        }
+
+        Data.AddCourseFee(new CourseFee
+        {
+            CourseName = newFee.CourseName.Trim(),
+            Amount = newFee.Amount,
+            Currency = string.IsNullOrWhiteSpace(newFee.Currency) ? "USD" : newFee.Currency.Trim(),
+            BillingPeriod = string.IsNullOrWhiteSpace(newFee.BillingPeriod) ? "Monthly" : newFee.BillingPeriod.Trim()
+        });
+
+        newFee = new CourseFee { Currency = "USD", BillingPeriod = "Monthly" };
+    }
+}

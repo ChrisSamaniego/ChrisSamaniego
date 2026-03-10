@@ -1,0 +1,20 @@
+@page "/student"
+@inject AppStateService AppState
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Student", "Estudiante")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Student)
+{
+    <div class="panel">
+        <h2>@Lang.T("Student area", "Área de estudiante")</h2>
+        <p>@Lang.T("Switch to ", "Cambia al rol de ")<strong>@Lang.T("Student", "Estudiante")</strong>@Lang.T(" from Dashboard to access your classes, tests, and calendar.", " desde el panel para acceder a tus clases, exámenes y calendario.")</p>
+    </div>
+}
+else
+{
+    <div class="panel">
+        <h2>@Lang.T("Student workspace", "Espacio del estudiante")</h2>
+        <p>@Lang.T("Use the left menu to open Home, Classes, Tests, Calendar, and Configuration.", "Usa el menú izquierdo para abrir Inicio, Clases, Exámenes, Calendario y Configuración.")</p>
+    </div>
+}
