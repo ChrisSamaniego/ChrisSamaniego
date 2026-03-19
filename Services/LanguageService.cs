@@ -2,7 +2,7 @@ namespace SchoolPortal.Services;
 
 public class LanguageService
 {
-    public string CurrentLanguage { get; private set; } = "en";
+    public string CurrentLanguage { get; private set; } = "es";
 
     public event Action? OnChange;
 
