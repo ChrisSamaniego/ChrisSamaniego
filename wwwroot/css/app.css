@@ -141,13 +141,35 @@ body {
 }
 
 
-.language-toggle {
+.language-icon-btn {
+    width: 42px;
+    height: 42px;
     border: 1px solid var(--border);
     background: #fff;
-    color: var(--text);
-    border-radius: 8px;
-    padding: 0.4rem 0.55rem;
-    font: inherit;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.language-icon-btn:hover {
+    background: #f8fbff;
+}
+
+.language-flag {
+    position: absolute;
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.language-flag:first-child {
+    transform: translate(-7px, -6px);
+}
+
+.language-flag:last-child {
+    transform: translate(7px, 6px);
 }
 
 .icon-btn {
@@ -196,11 +218,7 @@ body {
 .panel {
     padding: 1rem;
     color: var(--text);
-    background-color: #ffffff;
-    background-image:
-        radial-gradient(circle at 1px 1px, rgba(13, 27, 77, 0.08) 1px, transparent 0),
-        linear-gradient(135deg, rgba(216, 235, 255, 0.35), rgba(255, 255, 255, 0.88));
-    background-size: 8px 8px, auto;
+    background: #ffffff;
 }
 
 .btn {

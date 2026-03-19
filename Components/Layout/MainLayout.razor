@@ -33,10 +33,14 @@
             </div>
 
             <div class="header-actions">
-                <select class="language-toggle" value="@Lang.CurrentLanguage" @onchange="OnLanguageChanged" aria-label='@Lang.T("Language", "Idioma")'>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                </select>
+                <button type="button"
+                        class="language-icon-btn"
+                        title='@Lang.T("Switch language", "Cambiar idioma")'
+                        aria-label='@Lang.T("Switch language", "Cambiar idioma")'
+                        @onclick="ToggleLanguage">
+                    <span class="language-flag" aria-hidden="true">🇺🇸</span>
+                    <span class="language-flag" aria-hidden="true">🇲🇽</span>
+                </button>
 
                 <button type="button" class="icon-btn" title='@Lang.T("Alerts", "Alertas")' aria-label='@Lang.T("Alerts", "Alertas")'>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a5 5 0 0 0-5 5v3.5L5 15v1h14v-1l-2-2.5V9a5 5 0 0 0-5-5z"/><path d="M10 18a2 2 0 0 0 4 0"/></svg>
@@ -107,9 +111,9 @@
             _ => Lang.T("Student", "Estudiante")
         };
     }
-    private void OnLanguageChanged(ChangeEventArgs e)
+    private void ToggleLanguage()
     {
-        Lang.SetLanguage(e.Value?.ToString());
+        Lang.SetLanguage(Lang.CurrentLanguage == "en" ? "es" : "en");
     }
 
     private void Logout()
