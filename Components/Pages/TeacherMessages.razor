@@ -1,0 +1,66 @@
+@page "/teacher/contact"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Teacher Contact", "Contacto docente")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Teacher)
+{
+    <div class="panel"><p>@Lang.T("Switch to Teacher role.", "Cambia al rol de Docente.")</p></div>
+}
+else
+{
+    <div class="responsive-grid">
+        <div class="panel">
+            <h2>@Lang.T("Contact administrator", "Contactar administrador")</h2>
+            <EditForm Model="newMessage" OnValidSubmit="Send" FormName="teacher-message-form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-grid">
+                    <label>@Lang.T("Subject", "Asunto")</label>
+                    <InputText @bind-Value="newMessage.Subject" />
+                    <label>@Lang.T("Message", "Mensaje")</label>
+                    <InputTextArea @bind-Value="newMessage.Content" rows="5" />
+                    <button class="btn" type="submit">@Lang.T("Send message", "Enviar mensaje")</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="panel">
+            <h2>@Lang.T("Contact history", "Historial de contacto")</h2>
+            @foreach (var msg in Conversation)
+            {
+                <div class="list-item">
+                    <strong>@msg.Subject</strong>
+                    <div><small>@Lang.T("Sent", "Enviado") @msg.SentAt.ToLocalTime():g · @Lang.T("From", "De") @msg.FromRole</small></div>
+                    <p>@msg.Content</p>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private ComposeModel newMessage = new();
+
+    private IEnumerable<StaffMessage> Conversation => Data.StaffMessages
+        .Where(m => (m.FromRole == UserRole.Teacher && m.ToRole == UserRole.Administrator)
+                    || (m.FromRole == UserRole.Administrator && m.ToRole == UserRole.Teacher))
+        .OrderByDescending(m => m.SentAt);
+
+    private void Send()
+    {
+        Data.SendStaffMessage(UserRole.Teacher, UserRole.Administrator, newMessage.Subject, newMessage.Content);
+        newMessage = new ComposeModel();
+    }
+
+    private class ComposeModel
+    {
+        [Required]
+        public string Subject { get; set; } = string.Empty;
+
+        [Required]
+        public string Content { get; set; } = string.Empty;
+    }
+}
