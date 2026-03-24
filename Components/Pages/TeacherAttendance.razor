@@ -1,0 +1,129 @@
+@page "/teacher/attendance"
+@inject AppStateService AppState
+@inject SchoolDataService Data
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Take Attendance", "Tomar asistencia")</PageTitle>
+
+@if (AppState.CurrentRole != UserRole.Teacher)
+{
+    <div class="panel"><p>@Lang.T("Switch to Teacher role.", "Cambia al rol de Docente.")</p></div>
+}
+else
+{
+    <div class="panel">
+        <h2>@Lang.T("Take Attendance", "Tomar asistencia")</h2>
+        <p>@Lang.T("Use this page to mark attendance for today.", "Usa esta página para marcar la asistencia de hoy.")</p>
+
+        <table class="fees-table">
+            <thead>
+            <tr>
+                <th>@Lang.T("Student", "Estudiante")</th>
+                <th>@Lang.T("Present", "Presente")</th>
+                <th>@Lang.T("Comments", "Comentarios")</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var entry in attendance)
+            {
+                <tr>
+                    <td>@entry.Student</td>
+                    <td>
+                        <input type="checkbox" @bind="entry.IsPresent" aria-label="Mark @entry.Student present" />
+                    </td>
+                    <td>
+                        <InputText @bind-Value="entry.Comments" placeholder='@Lang.T("Optional comments", "Comentarios opcionales")' />
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="panel">
+        <h2>@Lang.T("Theoretical exam grading", "Calificación de exámenes teóricos")</h2>
+        @foreach (var questionnaire in Data.Questionnaires.OrderBy(q => q.CourseName).ThenBy(q => q.ExamType))
+        {
+            <div class="list-item">
+                <strong>@questionnaire.CourseName</strong>
+                <div><small>@Lang.T("Type", "Tipo"): @questionnaire.ExamType</small></div>
+
+                @if (!questionnaire.Responses.Any())
+                {
+                    <p>@Lang.T("No student submissions yet.", "Aún no hay envíos de estudiantes.")</p>
+                }
+                else
+                {
+                    @foreach (var response in questionnaire.Responses.OrderByDescending(r => r.SubmittedAt))
+                    {
+                        var grading = GetDraft(response.Id);
+                        <div class="message-reply">
+                            <strong>@response.StudentName</strong>
+                            <div><small>@Lang.T("Submitted", "Enviado") @response.SubmittedAt.ToLocalTime():g</small></div>
+                            <pre>@response.Answer</pre>
+
+                            <div class="form-grid">
+                                <label>@Lang.T("Grade (1-10)", "Calificación (1-10)")</label>
+                                <InputNumber @bind-Value="grading.Grade" />
+                                <label>@Lang.T("Teacher comments", "Comentarios del docente")</label>
+                                <InputTextArea @bind-Value="grading.Comments" rows="2" />
+                                <button class="btn" @onclick="() => SaveGrade(questionnaire.Id, response.Id)">@Lang.T("Save grade", "Guardar calificación")</button>
+                            </div>
+
+                            @if (response.Grade.HasValue)
+                            {
+                                <small>@Lang.T("Saved", "Guardado"): @response.Grade/10 · @response.TeacherComments</small>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private readonly List<AttendanceRow> attendance =
+    [
+        new() { Student = "Student One", IsPresent = true },
+        new() { Student = "Student Two", IsPresent = true },
+        new() { Student = "Student Three", IsPresent = false }
+    ];
+
+    private readonly Dictionary<Guid, GradingDraft> gradingDrafts = new();
+
+    private GradingDraft GetDraft(Guid responseId)
+    {
+        if (!gradingDrafts.TryGetValue(responseId, out var draft))
+        {
+            draft = new GradingDraft();
+            gradingDrafts[responseId] = draft;
+        }
+
+        return draft;
+    }
+
+    private void SaveGrade(Guid questionnaireId, Guid responseId)
+    {
+        if (!gradingDrafts.TryGetValue(responseId, out var draft))
+        {
+            return;
+        }
+
+        Data.GradeQuestionnaireResponse(questionnaireId, responseId, draft.Grade, draft.Comments);
+    }
+
+    private class AttendanceRow
+    {
+        public string Student { get; set; } = string.Empty;
+        public bool IsPresent { get; set; }
+        public string Comments { get; set; } = string.Empty;
+    }
+
+    private class GradingDraft
+    {
+        [Range(1, 10)]
+        public int Grade { get; set; } = 1;
+        public string Comments { get; set; } = string.Empty;
+    }
+}
