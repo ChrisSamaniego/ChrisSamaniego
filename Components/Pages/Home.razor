@@ -1,0 +1,83 @@
+@page "/"
+@layout SchoolPortal.Components.Layout.LoginLayout
+@inject AppStateService AppState
+@inject NavigationManager Navigation
+@inject LanguageService Lang
+
+<PageTitle>@Lang.T("Login", "Iniciar sesión")</PageTitle>
+
+<div class="login-shell">
+    <div class="login-card">
+        <div class="login-brand">@Lang.T("School Portal", "Portal Escolar")</div>
+        <h1>@Lang.T("Welcome back", "Bienvenido")</h1>
+        <p>@Lang.T("Sign in to continue to your dashboard.", "Inicia sesión para continuar a tu panel.")</p>
+
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="login-form">
+            <DataAnnotationsValidator />
+
+            <div class="login-field">
+                <label for="username">@Lang.T("Username", "Usuario")</label>
+                <InputText id="username" @bind-Value="loginModel.Username" />
+            </div>
+
+            <div class="login-field">
+                <label for="password">@Lang.T("Password", "Contraseña")</label>
+                <InputText id="password" type="password" @bind-Value="loginModel.Password" />
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <p class="login-error" role="alert">@errorMessage</p>
+            }
+
+            <button class="login-btn" type="submit">@Lang.T("Sign in", "Ingresar")</button>
+        </EditForm>
+
+        <small class="login-hint">@Lang.T("Demo credentials:", "Credenciales de prueba:") @Lang.T("Student", "Estudiante") <strong>test/test</strong>, @Lang.T("Teacher", "Docente") <strong>teacher/teacher</strong>, @Lang.T("Admin", "Admin") <strong>admin/admin</strong></small>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm(FormName = "login-form")]
+    private LoginModel loginModel { get; set; } = new();
+    private string errorMessage = string.Empty;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && AppState.IsAuthenticated)
+        {
+            Navigation.NavigateTo(GetHomeRoute(), replace: true);
+        }
+    }
+
+    private void HandleLogin()
+    {
+        if (AppState.Login(loginModel.Username, loginModel.Password))
+        {
+            errorMessage = string.Empty;
+            Navigation.NavigateTo(GetHomeRoute(), replace: true);
+            return;
+        }
+
+        errorMessage = Lang.T("Invalid username or password.", "Usuario o contraseña inválidos.");
+    }
+
+
+    private string GetHomeRoute()
+    {
+        return AppState.CurrentRole switch
+        {
+            UserRole.Teacher => "/teacher/attendance",
+            UserRole.Administrator => "/admin",
+            _ => "/student/home"
+        };
+    }
+    private class LoginModel
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}
