@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SchoolPortal.Data;
 using SchoolPortal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<AppStateService>();
 builder.Services.AddScoped<SchoolDataService>();
 builder.Services.AddScoped<LanguageService>();
+
+builder.Services.AddDbContext<SchoolPortalDbContext>(options =>
+    options.UseInMemoryDatabase("SchoolPortalDb"));
 
 var app = builder.Build();
 
