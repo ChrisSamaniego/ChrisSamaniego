@@ -4,9 +4,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SchoolPortal.Api/**/*.cs" />
+    <Compile Remove="SchoolPortal.Data/**/*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="SchoolPortal.Data/SchoolPortal.Data.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
   </ItemGroup>
