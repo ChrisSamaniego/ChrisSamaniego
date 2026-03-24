@@ -7,6 +7,7 @@ public class SchoolPortalDbContext(DbContextOptions<SchoolPortalDbContext> optio
 {
     public DbSet<UserEntity> Users => Set<UserEntity>();
     public DbSet<CourseEntity> Courses => Set<CourseEntity>();
+    public DbSet<ClassScheduleEntity> ClassSchedules => Set<ClassScheduleEntity>();
     public DbSet<CourseFeeEntity> CourseFees => Set<CourseFeeEntity>();
     public DbSet<PortalDocumentEntity> Documents => Set<PortalDocumentEntity>();
     public DbSet<AdminMessageEntity> AdminMessages => Set<AdminMessageEntity>();
@@ -30,6 +31,14 @@ public class SchoolPortalDbContext(DbContextOptions<SchoolPortalDbContext> optio
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Code).HasMaxLength(32);
             entity.Property(x => x.Name).HasMaxLength(128);
+        });
+
+        modelBuilder.Entity<ClassScheduleEntity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(128);
+            entity.Property(x => x.Instructor).HasMaxLength(128);
+            entity.Property(x => x.Room).HasMaxLength(64);
         });
 
         modelBuilder.Entity<CourseFeeEntity>(entity =>
